@@ -1,20 +1,20 @@
-﻿using System;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Windows.Forms;
+using EntranceRegister.Models;
+
 // using BehFarma.Model;
-
-namespace View
-{
-    public partial class FormLogin : Form
+namespace EntranceRegister.Forms;
+public partial class FormLogin : Form
     {
-        // public User User { private set; get; }
+    // public User User { private set; get; }
 
-        public FormLogin()
+    private readonly EntranceContext _dbContext;
+
+    public FormLogin(EntranceContext dbContext)
         {
             InitializeComponent();
-        }
+            _dbContext = dbContext;
+    }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
@@ -55,4 +55,3 @@ namespace View
             panel.Top = Height/2 - panel.Height/2;
         }
     }
-}

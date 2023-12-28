@@ -1,6 +1,6 @@
-﻿namespace View
-{
-    partial class FormMain
+﻿namespace EntranceRegister.Forms;
+
+partial class FormMain
     {
         /// <summary>
         /// Required designer variable.
@@ -933,5 +933,4 @@
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Label labelVisitorsCount;
     }
-}
 
