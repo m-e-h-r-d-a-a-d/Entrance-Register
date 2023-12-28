@@ -129,7 +129,7 @@ public partial class FormMain : Form
 
     private void buttonLogout_Click(object sender, EventArgs e)
     {
-        if (MessageBox.Show("آیا مطمئنید؟", "خروج از سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
+        if (MessageBox.Show(@"آیا مطمئنید؟", @"خروج از سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
             DialogResult.OK)
             Application.Exit();
     }
@@ -137,7 +137,7 @@ public partial class FormMain : Form
     private void buttonShutdown_Click(object sender, EventArgs e)
     {
         if (
-            MessageBox.Show("آیا مطمئنید؟", "خاموش کردن سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) ==
+            MessageBox.Show(@"آیا مطمئنید؟", @"خاموش کردن سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) ==
             DialogResult.OK)
             Process.Start("shutdown", "/s /t 0");
     }
