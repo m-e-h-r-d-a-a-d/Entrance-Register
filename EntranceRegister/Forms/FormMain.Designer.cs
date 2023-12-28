@@ -198,7 +198,7 @@ partial class FormMain
             this.buttonTakePhoto.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonTakePhoto.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.buttonTakePhoto.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(43)))), ((int)(((byte)(61)))));
-            // this.buttonTakePhoto.Image = global::BehFarma.UI.Properties.Resources.Camera_01_128b;
+            this.buttonTakePhoto.Image = Properties.Resources.Camera_01_128b;
             this.buttonTakePhoto.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonTakePhoto.Location = new System.Drawing.Point(254, 0);
             this.buttonTakePhoto.Margin = new System.Windows.Forms.Padding(20, 0, 20, 0);
@@ -222,7 +222,7 @@ partial class FormMain
             this.buttonRegisterAndPrint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonRegisterAndPrint.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.buttonRegisterAndPrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(43)))), ((int)(((byte)(61)))));
-            // this.buttonRegisterAndPrint.Image = global::BehFarma.UI.Properties.Resources.Identity_Card_128b;
+            this.buttonRegisterAndPrint.Image = Properties.Resources.Identity_Card_128b;
             this.buttonRegisterAndPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonRegisterAndPrint.Location = new System.Drawing.Point(20, 0);
             this.buttonRegisterAndPrint.Margin = new System.Windows.Forms.Padding(20, 0, 20, 0);
@@ -634,7 +634,7 @@ partial class FormMain
             // ColumnButtonReprint
             // 
             this.ColumnButtonReprint.HeaderText = "چاپ مجدد";
-            // this.ColumnButtonReprint.Image = global::BehFarma.UI.Properties.Resources.Identity_Card_128b;
+            this.ColumnButtonReprint.Image = Properties.Resources.Identity_Card_128b;
             this.ColumnButtonReprint.Name = "ColumnButtonReprint";
             this.ColumnButtonReprint.ReadOnly = true;
             this.ColumnButtonReprint.Resizable = System.Windows.Forms.DataGridViewTriState.True;
@@ -642,7 +642,7 @@ partial class FormMain
             // ColumnButtonExit
             // 
             this.ColumnButtonExit.HeaderText = "ثبت خروج";
-            // this.ColumnButtonExit.Image = global::BehFarma.UI.Properties.Resources.Login_Door_Dark_128;
+            this.ColumnButtonExit.Image = Properties.Resources.Login_Door_Dark_128;
             this.ColumnButtonExit.Name = "ColumnButtonExit";
             this.ColumnButtonExit.ReadOnly = true;
             this.ColumnButtonExit.Resizable = System.Windows.Forms.DataGridViewTriState.True;
@@ -783,7 +783,7 @@ partial class FormMain
             this.buttonShutdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonShutdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.buttonShutdown.ForeColor = System.Drawing.Color.WhiteSmoke;
-            // this.buttonShutdown.Image = global::BehFarma.UI.Properties.Resources.Media_Start_1281;
+            this.buttonShutdown.Image = Properties.Resources.Media_Start_1281;
             this.buttonShutdown.Location = new System.Drawing.Point(118, 0);
             this.buttonShutdown.Margin = new System.Windows.Forms.Padding(0);
             this.buttonShutdown.Name = "buttonShutdown";
@@ -806,7 +806,7 @@ partial class FormMain
             this.buttonHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.buttonHelp.ForeColor = System.Drawing.Color.WhiteSmoke;
-            // this.buttonHelp.Image = global::BehFarma.UI.Properties.Resources.Student_Read_02_128;
+            this.buttonHelp.Image = Properties.Resources.Student_Read_02_128;
             this.buttonHelp.Location = new System.Drawing.Point(0, 0);
             this.buttonHelp.Margin = new System.Windows.Forms.Padding(0);
             this.buttonHelp.Name = "buttonHelp";
@@ -821,7 +821,7 @@ partial class FormMain
             // dataGridViewImageColumn1
             // 
             this.dataGridViewImageColumn1.HeaderText = "";
-            // this.dataGridViewImageColumn1.Image = global::BehFarma.UI.Properties.Resources.Identity_Card_128b;
+            this.dataGridViewImageColumn1.Image = Properties.Resources.Identity_Card_128b;
             this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
             this.dataGridViewImageColumn1.ReadOnly = true;
             this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
@@ -829,7 +829,7 @@ partial class FormMain
             // dataGridViewImageColumn2
             // 
             this.dataGridViewImageColumn2.HeaderText = "";
-            // this.dataGridViewImageColumn2.Image = global::BehFarma.UI.Properties.Resources.Login_Door_Dark_128;
+            this.dataGridViewImageColumn2.Image = Properties.Resources.Login_Door_Dark_128;
             this.dataGridViewImageColumn2.Name = "dataGridViewImageColumn2";
             this.dataGridViewImageColumn2.ReadOnly = true;
             this.dataGridViewImageColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;

@@ -154,7 +154,7 @@ partial class FormReport
         this.buttonSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
         this.buttonSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(43)))), ((int)(((byte)(61)))));
-        // this.buttonSearch.Image = global::BehFarma.UI.Properties.Resources.Search_Find_128;
+        this.buttonSearch.Image = Properties.Resources.Search_Find_128;
         this.buttonSearch.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
         this.buttonSearch.Location = new System.Drawing.Point(0, 128);
         this.buttonSearch.Margin = new System.Windows.Forms.Padding(20, 0, 20, 0);
@@ -430,7 +430,7 @@ partial class FormReport
         this.buttonExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
         this.buttonExport.ForeColor = System.Drawing.Color.WhiteSmoke;
-        // this.buttonExport.Image = global::BehFarma.UI.Properties.Resources.Excel_64;
+        this.buttonExport.Image = Properties.Resources.Excel_641;
         this.buttonExport.Location = new System.Drawing.Point(366, 0);
         this.buttonExport.Margin = new System.Windows.Forms.Padding(0);
         this.buttonExport.Name = "buttonExport";
@@ -476,7 +476,7 @@ partial class FormReport
         this.buttonShutdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonShutdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
         this.buttonShutdown.ForeColor = System.Drawing.Color.WhiteSmoke;
-        // this.buttonShutdown.Image = global::BehFarma.UI.Properties.Resources.Media_Start_1281;
+        this.buttonShutdown.Image = Properties.Resources.Media_Start_1281;
         this.buttonShutdown.Location = new System.Drawing.Point(118, 0);
         this.buttonShutdown.Margin = new System.Windows.Forms.Padding(0);
         this.buttonShutdown.Name = "buttonShutdown";
@@ -499,7 +499,7 @@ partial class FormReport
         this.buttonHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
         this.buttonHelp.ForeColor = System.Drawing.Color.WhiteSmoke;
-        // this.buttonHelp.Image = global::BehFarma.UI.Properties.Resources.Student_Read_02_128;
+        this.buttonHelp.Image = Properties.Resources.Student_Read_02_128;
         this.buttonHelp.Location = new System.Drawing.Point(0, 0);
         this.buttonHelp.Margin = new System.Windows.Forms.Padding(0);
         this.buttonHelp.Name = "buttonHelp";
@@ -523,7 +523,7 @@ partial class FormReport
         this.buttonExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
         this.buttonExit.ForeColor = System.Drawing.Color.WhiteSmoke;
-        // this.buttonExit.Image = global::BehFarma.UI.Properties.Resources.Login_Arrow_128;
+        this.buttonExit.Image = Properties.Resources.Login_Arrow_128;
         this.buttonExit.Location = new System.Drawing.Point(665, 0);
         this.buttonExit.Margin = new System.Windows.Forms.Padding(0);
         this.buttonExit.Name = "buttonExit";

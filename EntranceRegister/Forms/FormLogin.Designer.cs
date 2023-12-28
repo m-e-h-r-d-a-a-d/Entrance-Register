@@ -100,7 +100,7 @@ partial class FormLogin
         this.buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonOK.Font = new System.Drawing.Font("B Yekan", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
         this.buttonOK.ForeColor = System.Drawing.Color.WhiteSmoke;
-        // this.buttonOK.Image = global::BehFarma.UI.Properties.Resources.Key_Access_128;
+        this.buttonOK.Image = Properties.Resources.Key_Access_128;
         this.buttonOK.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
         this.buttonOK.Location = new System.Drawing.Point(29, 70);
         this.buttonOK.Margin = new System.Windows.Forms.Padding(0);

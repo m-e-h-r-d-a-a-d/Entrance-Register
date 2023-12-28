@@ -198,13 +198,13 @@ public partial class FormReport : Form
 
     private void buttonLogOut_Click_1(object sender, EventArgs e)
     {
-        if (MessageBox.Show("آیا مطمئنید؟", "خروج از سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+        if (MessageBox.Show(@"آیا مطمئنید؟", @"خروج از سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             Application.Exit();
     }
 
     private void buttonShutdown_Click(object sender, EventArgs e)
     {
-        if (MessageBox.Show("آیا مطمئنید؟", "خاموش کردن سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+        if (MessageBox.Show(@"آیا مطمئنید؟", @"خاموش کردن سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
             Process.Start("shutdown", "/s /t 0");
     }
 
