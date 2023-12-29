@@ -6,22 +6,18 @@ using System.Text;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-// using Emgu.CV.VideoSurveillance;
-// using Microsoft.Reporting.WinForms;
-// using AForge.Video;
-// using AForge.Video.DirectShow;
+using EntranceRegister.Models;
+using Microsoft.Reporting.WinForms;
 using Stream = System.IO.Stream;
 using Application = System.Windows.Forms.Application;
-using EntranceRegister.Models;
 
-namespace EntranceRegister.Forms;
+namespace EntranceRegister;
 
 public partial class FormMain : Form
 {
     private readonly EntranceContext _dbContext;
     private DateTime _today;
     private List<Bitmap> _lastDetectedFaces = new List<Bitmap>();
-    // private BehFarmaEntities _entities = new BehFarmaEntities();
     private IList<Stream> _streams;
     private int _currentPageIndex;
     private int _detectionSize;
@@ -34,7 +30,6 @@ public partial class FormMain : Form
     private string _cameraPassword;
     private string _cameraDeviceName;
     private double _detectionScaleFactor;
-    // private IVideoSource _camera;
     private int _facesIndex;
     private int _frameSkip;
     private int _skipIndex;
@@ -46,7 +41,7 @@ public partial class FormMain : Form
     private int _visitorsCount;
     private CascadeClassifier _cascadeClassifier;
     private BackgroundSubtractorMOG2 _backgroundSubtractor;
-    private int counter = 0;
+    private int _counter = 0;
 
     private VideoCapture _videoCapture;
 
@@ -67,7 +62,6 @@ public partial class FormMain : Form
     {
         InitializeComponent();
         _dbContext = dbContext;
-
         ReadConfiguration();
 
     }
@@ -97,9 +91,9 @@ public partial class FormMain : Form
             return;
         }
 
-        // var presence = SavePersonAndPresence();
+        var presence = SavePersonAndPresence();
         VisitorsCount++;
-        // PrintCard(presence);
+        PrintCard(presence);
         ClearForm();
     }
 
@@ -123,7 +117,10 @@ public partial class FormMain : Form
                 // _camera.Stop();
                 // _camera.NewFrame -= ProcessFrame;
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
     }
 
@@ -144,29 +141,29 @@ public partial class FormMain : Form
 
     private void dataGridViewPresence_CellContentClick(object sender, DataGridViewCellEventArgs e)
     {
-        // var selectedPresence = (Presence)dataGridViewPresence.Rows[e.RowIndex].DataBoundItem;
-        // if (e.ColumnIndex == ColumnButtonReprint.Index)
-        //     PrintCard(selectedPresence);
-        // else if (e.ColumnIndex == ColumnButtonExit.Index)
-        //     if (selectedPresence.EndDate == null)
-        //         RegisterExit(selectedPresence);
+        var selectedPresence = (Presence)dataGridViewPresence.Rows[e.RowIndex].DataBoundItem;
+        if (e.ColumnIndex == ColumnButtonReprint.Index)
+            PrintCard(selectedPresence);
+        else if (e.ColumnIndex == ColumnButtonExit.Index)
+            if (selectedPresence.EndDate == null)
+                RegisterExit(selectedPresence);
     }
 
     private void dataGridViewPresence_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
     {
-        // var currentPresence = (Presence)dataGridViewPresence.Rows[e.RowIndex].DataBoundItem;
-        // if (currentPresence.EndDate.HasValue)
-        // {
-        //     if (e.ColumnIndex != ColumnButtonExit.Index)
-        //     {
-        //         e.CellStyle.BackColor = Color.Gray;
-        //         e.CellStyle.SelectionBackColor = Color.DimGray;
-        //     }
-        //     else
-        //     {
-        //         e.CellStyle.BackColor = e.CellStyle.SelectionBackColor = Color.LightGray;
-        //     }
-        // }
+        var currentPresence = (Presence)dataGridViewPresence.Rows[e.RowIndex].DataBoundItem;
+        if (currentPresence.EndDate.HasValue)
+        {
+            if (e.ColumnIndex != ColumnButtonExit.Index)
+            {
+                e.CellStyle.BackColor = Color.Gray;
+                e.CellStyle.SelectionBackColor = Color.DimGray;
+            }
+            else
+            {
+                e.CellStyle.BackColor = e.CellStyle.SelectionBackColor = Color.LightGray;
+            }
+        }
     }
 
     private void buttonReport_Click(object sender, EventArgs e)
@@ -183,10 +180,14 @@ public partial class FormMain : Form
     private void pictureBoxFace_Click(object sender, EventArgs e)
     {
         if (_lastDetectedFaces.Count == 0)
+        {
             return;
+        }
 
         if (++_facesIndex >= _lastDetectedFaces.Count)
+        {
             _facesIndex = 0;
+        }
 
         pictureBoxFace.Image = _lastDetectedFaces[_facesIndex];
     }
@@ -217,17 +218,17 @@ public partial class FormMain : Form
         TopMost = _alwaysOnTop;
         bool.TryParse(ConfigurationManager.AppSettings["IsMotionDetected"], out _isMotionDetected);
         if (!Guid.TryParse(ConfigurationManager.AppSettings["GateId"], out _gateId)) return;
-        // var gate = _entities.Gates.SingleOrDefault(g => g.Id == _gateId);
-        // if (gate == null)
+        var gate = _dbContext.Gates.SingleOrDefault(g => g.Id == _gateId);
+        if (gate == null)
         {
             MessageBox.Show("خطا در انتخاب ورودی");
             Application.Exit();
             Environment.Exit(0);
         }
-        // else
-        // {
-        // Globals.Gate = gate;
-        // }
+        else
+        {
+            Globals.Gate = gate;
+        }
 
         _cascadeClassifier = new CascadeClassifier(_faceFileName);
         _backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
@@ -239,11 +240,11 @@ public partial class FormMain : Form
         textBoxName.Text = string.Empty;
     }
 
-    // private void RegisterExit(Presence selectedPresence)
-    // {
-    //     selectedPresence.EndDate = DateTime.Now;
-    //     _entities.SaveChanges();
-    // }
+    private void RegisterExit(Presence selectedPresence)
+    {
+        selectedPresence.EndDate = DateTime.Now;
+        _dbContext.SaveChanges();
+    }
 
     private void CaptureCamera()
     {
@@ -310,16 +311,17 @@ public partial class FormMain : Form
         {
             return;
         }
-        Mat frame = new Mat();
+        var frame = new Mat();
         _videoCapture.Retrieve(frame);
 
-        List<Bitmap> faces = null;
+
 
         if (frame.Width > _width)
         {
             CvInvoke.Resize(frame, frame, new Size(_width, _height), 2, 2, Inter.Linear);
         }
 
+        var faces = new List<Bitmap>();
         try
         {
             pictureBoxCamera.Image = DetectFace(frame, out faces);
@@ -340,11 +342,11 @@ public partial class FormMain : Form
     private Bitmap DetectFace(Mat inputImage, out List<Bitmap> outputFaces)
     {
         outputFaces = new List<Bitmap>();
-        Mat gray = new Mat();
+        var gray = new Mat();
 
         if (_isMotionDetected)
         {
-            Mat resizedImage = new Mat();
+            var resizedImage = new Mat();
             CvInvoke.Resize(inputImage, resizedImage, new Size(_width, _height), 2, 2, Inter.Linear);
             CvInvoke.GaussianBlur(resizedImage, resizedImage, new Size(7, 7), 0, 0);
 
@@ -385,15 +387,15 @@ public partial class FormMain : Form
         return inputImage.ToBitmap().Clone(new Rectangle(0, 0, inputImage.Width, inputImage.Height), PixelFormat.DontCare);
     }
 
-    // private void Export(LocalReport report)
-    // {
-    //     Warning[]
-    //     Warning[] warnings;
-    //     _streams = new List<Stream>();
-    //     report.Render("Image", _printerDeviceInfo, CreateStream, out warnings);
-    //     foreach (Stream stream in _streams)
-    //         stream.Position = 0;
-    // }
+    private void Export(LocalReport report)
+    {
+        _streams = new List<Stream>();
+        report.Render("Image", _printerDeviceInfo, CreateStream, out Warning[] _);
+        foreach (var stream in _streams)
+        {
+            stream.Position = 0;
+        }
+    }
 
     private void Print()
     {
@@ -409,17 +411,17 @@ public partial class FormMain : Form
         printDoc.Print();
     }
 
-    // private void PrintCard(Presence presence)
-    // {
-    //     var report = new LocalReport
-    //     {
-    //         ReportPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\Card.rdlc"
-    //     };
-    //
-    //     report.DataSources.Add(new ReportDataSource("DataSetPresence", new BindingSource(presence, null)));
-    //     Export(report);
-    //     Print();
-    // }
+    private void PrintCard(Presence presence)
+    {
+        var report = new LocalReport
+        {
+            ReportPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\Card.rdlc"
+        };
+
+        report.DataSources.Add(new ReportDataSource("DataSetPresence", new BindingSource(presence, null)));
+        Export(report);
+        Print();
+    }
 
     private Stream CreateStream(string name, string fileNameExtension, Encoding encoding, string mimeType, bool willSeek)
     {
@@ -445,65 +447,62 @@ public partial class FormMain : Form
         ev.HasMorePages = (_currentPageIndex < _streams.Count);
     }
 
-    // private Presence SavePersonAndPresence()
-    // {
-    //     var person = _entities.People.SingleOrDefault(p => p.Fullname == textBoxName.Text && p.Gender == comboBoxGender.SelectedIndex > 0);
-    //
-    //     if (person == null)
-    //     {
-    //         person = new Person { Id = Guid.NewGuid(), Fullname = textBoxName.Text };
-    //         _entities.People.Add(person);
-    //     }
-    //
-    //     if (!person.Gender.HasValue)
-    //         person.Gender = comboBoxGender.SelectedIndex > 0;
-    //
-    //     var presence = new Presence
-    //     {
-    //         Id = Guid.NewGuid(),
-    //         Person = person,
-    //         Host = (Host)comboBoxHosts.SelectedValue,
-    //         StartDate = DateTime.Now,
-    //         RegistrarUsername = Globals.User.Username,
-    //         Gate = Globals.Gate
-    //     };
-    //
-    //     if (pictureBoxFace.Image != null)
-    //     {
-    //         using (var imageStream = new MemoryStream())
-    //         {
-    //             pictureBoxFace.Image.Save(imageStream, ImageFormat.Jpeg);
-    //             presence.Photo = imageStream.ToArray();
-    //         }
-    //     }
-    //
-    //     _entities.Presences.Add(presence);
-    //     _entities.SaveChanges();
-    //     bindingSourceTodayPresences.Insert(0, presence);
-    //
-    //     return presence;
-    // }
+    private Presence SavePersonAndPresence()
+    {
+        var person = _dbContext.People.SingleOrDefault(p => p.Fullname == textBoxName.Text && p.Gender == comboBoxGender.SelectedIndex > 0);
+
+        if (person == null)
+        {
+            person = new Person { Id = Guid.NewGuid(), Fullname = textBoxName.Text };
+            _dbContext.People.Add(person);
+        }
+
+        person.Gender ??= comboBoxGender.SelectedIndex > 0;
+
+        var presence = new Presence
+        {
+            Id = Guid.NewGuid(),
+            Person = person,
+            Host = (Host)comboBoxHosts.SelectedValue!,
+            StartDate = DateTime.Now,
+            RegistrarUsername = Globals.User.Username,
+            Gate = Globals.Gate
+        };
+
+        if (pictureBoxFace.Image != null)
+        {
+            using var imageStream = new MemoryStream();
+            pictureBoxFace.Image.Save(imageStream, ImageFormat.Jpeg);
+            presence.Photo = imageStream.ToArray();
+        }
+
+        _dbContext.Presences.Add(presence);
+        _dbContext.SaveChanges();
+        bindingSourceTodayPresences.Insert(0, presence);
+
+        return presence;
+    }
 
     private void ExtractFace()
     {
         pictureBoxFace.Image = _lastDetectedFaces.Count > 0 ? _lastDetectedFaces[0] : null;
         var now = DateTime.Now;
-        // textBoxDate.Text = DateUtils.ToPersianDateString(now);
-        // textBoxStartTime.Text = DateUtils.ToPersianTimeString(now);
+        textBoxDate.Text = DateUtils.ToPersianDateString(now);
+        textBoxStartTime.Text = DateUtils.ToPersianTimeString(now);
     }
 
     private void RefreshDateTime()
     {
-        // labelDateTime.Text = DateUtils.ToLongPersianDateTimeString(DateTime.Now);
+        labelDateTime.Text = DateUtils.ToLongPersianDateTimeString(DateTime.Now);
     }
 
     private void FillHostsComboBox()
     {
         comboBoxHosts.DisplayMember = "Name";
-        // comboBoxHosts.DataSource = (from h in _entities.Hosts
-        //                             where h.GateId == Globals.Gate.Id
-        //                             orderby h.Name
-        //                             select h).ToList();
+        comboBoxHosts.DataSource = (from h in _dbContext.Hosts
+                                    where h.GateId == Globals.Gate.Id
+                                    orderby h.Name
+                                    select h).ToList();
     }
 
     private void LoadTodayPresences()
@@ -511,22 +510,22 @@ public partial class FormMain : Form
         _today = DateTime.Now.Date;
         var tomorrow = _today.AddDays(1);
 
-        // var list = (from p in _entities.Presences
-        //             where p.StartDate >= _today && p.StartDate < tomorrow && p.GateId == Globals.Gate.Id
-        //             orderby p.StartDate descending
-        //             select p).ToList();
+        var list = (from p in _dbContext.Presences
+                    where p.StartDate >= _today && p.StartDate < tomorrow && p.GateId == Globals.Gate.Id
+                    orderby p.StartDate descending
+                    select p).ToList();
 
-        // bindingSourceTodayPresences.DataSource = list;
-        // VisitorsCount = list.Count;
+        bindingSourceTodayPresences.DataSource = list;
+        VisitorsCount = list.Count;
     }
 
     private void buttonHelp_Click(object sender, EventArgs e)
     {
-        string yourpath = Environment.CurrentDirectory + @"\help\help.chm";
+        string yourPath = Environment.CurrentDirectory + @"\help\help.chm";
 
-        if (File.Exists(yourpath))
+        if (File.Exists(yourPath))
         {
-            Help.ShowHelp(this, yourpath);
+            Help.ShowHelp(this, yourPath);
         }
         else
         {

@@ -2,8 +2,8 @@
 using System.Text;
 using EntranceRegister.Models;
 
-// using BehFarma.Model;
-namespace EntranceRegister.Forms;
+namespace EntranceRegister;
+
 public partial class FormLogin : Form
 {
     public User User { private set; get; }
@@ -28,7 +28,7 @@ public partial class FormLogin : Form
         foreach (var b in hash)
             sb.Append(b.ToString("X2"));
 
-        var user = (from u in _dbContext.Users where u.Username == textBoxUsername.Text && u.Password == sb.ToString() select u).FirstOrDefault();
+        var user = _dbContext.Users.FirstOrDefault(u => u.Username == textBoxUsername.Text && u.Password == sb.ToString());
         if (user == null)
         {
             MessageBox.Show(@"کد کاربری یا رمز عبور اشتباه است", @"خطا در ورود", MessageBoxButtons.OK, MessageBoxIcon.Error);

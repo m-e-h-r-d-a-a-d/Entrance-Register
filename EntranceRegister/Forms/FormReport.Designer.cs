@@ -1,4 +1,6 @@
-﻿namespace EntranceRegister.Forms;
+﻿using EntranceRegister.Models;
+
+namespace EntranceRegister;
 
 partial class FormReport
 {
@@ -387,7 +389,7 @@ partial class FormReport
         // 
         // bindingSourcePresences
         // 
-        // this.bindingSourcePresences.DataSource = typeof(BehFarma.Model.Presence);
+        this.bindingSourcePresences.DataSource = typeof(Presence);
         // 
         // tableLayoutPanel1
         // 
