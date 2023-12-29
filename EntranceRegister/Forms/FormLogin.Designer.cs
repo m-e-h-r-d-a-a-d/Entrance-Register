@@ -1,4 +1,4 @@
-﻿namespace EntranceRegister.Forms;
+﻿namespace EntranceRegister;
 
 partial class FormLogin
 {

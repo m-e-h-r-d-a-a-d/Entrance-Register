@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EntranceRegister.Models;
+﻿namespace EntranceRegister.Models;
 
 public partial class User
 {

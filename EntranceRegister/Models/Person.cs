@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EntranceRegister.Models;
+﻿namespace EntranceRegister.Models;
 
 public partial class Person
 {
@@ -17,3 +14,4 @@ public partial class Person
 
     public virtual ICollection<Presence> Presences { get; set; } = new List<Presence>();
 }
+

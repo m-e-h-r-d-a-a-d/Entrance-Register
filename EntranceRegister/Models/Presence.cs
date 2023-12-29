@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EntranceRegister.Models;
+﻿namespace EntranceRegister.Models;
 
 public partial class Presence
 {
@@ -22,4 +19,10 @@ public partial class Presence
     public Guid GateId { get; set; }
 
     public virtual Person Person { get; set; } = null!;
+
+    public virtual Host Host { get; set; } = null!;
+
+    public virtual User Registrar { get; set; } = null!;
+
+    public virtual Gate Gate { get; set; } = null!;
 }
