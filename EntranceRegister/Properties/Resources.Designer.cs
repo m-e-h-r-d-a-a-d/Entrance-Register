@@ -131,6 +131,29 @@ namespace EntranceRegister.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;!--
+        ///    Stump-based 24x24 discrete(?) adaboost frontal face detector.
+        ///    Created by Rainer Lienhart.
+        ///
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        ///
+        ///  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+        ///
+        ///  By downloading, copying, installing or using the software you agree to this license.
+        ///  If you do not agree to this license, do not download, install,
+        ///  copy or use the software.
+        ///
+        ///
+        ///                        Intel L [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string haarcascade_frontalface_default {
+            get {
+                return ResourceManager.GetString("haarcascade_frontalface_default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Identity_Card_128 {
@@ -157,6 +180,31 @@ namespace EntranceRegister.Properties {
             get {
                 object obj = ResourceManager.GetObject("Key-Access-128", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;!--
+        ///number of positive samples 3000
+        ///number of negative samples 1500
+        ///--&gt;
+        ///&lt;opencv_storage&gt;
+        ///&lt;cascade type_id=&quot;opencv-cascade-classifier&quot;&gt;
+        ///  &lt;stageType&gt;BOOST&lt;/stageType&gt;
+        ///  &lt;featureType&gt;LBP&lt;/featureType&gt;
+        ///  &lt;height&gt;24&lt;/height&gt;
+        ///  &lt;width&gt;24&lt;/width&gt;
+        ///  &lt;stageParams&gt;
+        ///    &lt;boostType&gt;GAB&lt;/boostType&gt;
+        ///    &lt;minHitRate&gt;0.9950000047683716&lt;/minHitRate&gt;
+        ///    &lt;maxFalseAlarm&gt;0.5000000000000000&lt;/maxFalseAlarm&gt;
+        ///    &lt;weightTrimRate&gt;0.9500000000000000&lt;/weightTrimRate&gt;
+        ///    &lt;maxDepth&gt;1&lt;/maxDepth&gt;        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string lbpcascade_frontalface {
+            get {
+                return ResourceManager.GetString("lbpcascade_frontalface", resourceCulture);
             }
         }
         

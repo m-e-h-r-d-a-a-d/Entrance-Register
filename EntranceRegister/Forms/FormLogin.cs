@@ -1,12 +1,12 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using EntranceRegister.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace EntranceRegister;
 
 public partial class FormLogin : Form
 {
-    public User User { private set; get; }
 
     private readonly EntranceContext _dbContext;
 
@@ -26,7 +26,9 @@ public partial class FormLogin : Form
         // step 2, convert byte array to hex string
         var sb = new StringBuilder();
         foreach (var b in hash)
+        {
             sb.Append(b.ToString("X2"));
+        }
 
         var user = _dbContext.Users.FirstOrDefault(u => u.Username == textBoxUsername.Text && u.Password == sb.ToString());
         if (user == null)
@@ -35,7 +37,7 @@ public partial class FormLogin : Form
             return;
         }
 
-        User = user;
+        Globals.User = user;
         DialogResult = DialogResult.OK;
     }
 
