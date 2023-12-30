@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.Text;
@@ -10,23 +9,26 @@ using EntranceRegister.Models;
 using Microsoft.Reporting.WinForms;
 using Stream = System.IO.Stream;
 using Application = System.Windows.Forms.Application;
+using Microsoft.Extensions.Configuration;
+using Emgu.CV.Face;
 
 namespace EntranceRegister;
 
 public partial class FormMain : Form
 {
     private readonly EntranceContext _dbContext;
+    private readonly IConfigurationRoot _configuration;
     private DateTime _today;
     private List<Bitmap> _lastDetectedFaces = new List<Bitmap>();
     private IList<Stream> _streams;
     private int _currentPageIndex;
     private int _detectionSize;
     private int _detectionNeighbors;
-    private string? _printerDeviceInfo;
+    private string _printerDeviceInfo;
     private int _width;
     private int _height;
-    private string? _cameraStreamUrl;
-    private string? _cameraUsername;
+    private string _cameraStreamUrl;
+    private string _cameraUsername;
     private string _cameraPassword;
     private string _cameraDeviceName;
     private double _detectionScaleFactor;
@@ -41,7 +43,6 @@ public partial class FormMain : Form
     private int _visitorsCount;
     private CascadeClassifier _cascadeClassifier;
     private BackgroundSubtractorMOG2 _backgroundSubtractor;
-    private int _counter = 0;
 
     private VideoCapture _videoCapture;
 
@@ -55,13 +56,11 @@ public partial class FormMain : Form
         }
     }
 
-
-
-
-    public FormMain(EntranceContext dbContext)
+    public FormMain(EntranceContext dbContext, IConfigurationRoot configuration)
     {
         InitializeComponent();
         _dbContext = dbContext;
+        _configuration = configuration;
         ReadConfiguration();
 
     }
@@ -87,7 +86,7 @@ public partial class FormMain : Form
     {
         if (textBoxName.Text == string.Empty)
         {
-            MessageBox.Show("لطفا نام مراجعه کننده را وارد کنید.‏");
+            MessageBox.Show(@"لطفا نام مراجعه کننده را وارد کنید.‏");
             return;
         }
 
@@ -152,17 +151,19 @@ public partial class FormMain : Form
     private void dataGridViewPresence_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
     {
         var currentPresence = (Presence)dataGridViewPresence.Rows[e.RowIndex].DataBoundItem;
-        if (currentPresence.EndDate.HasValue)
+        if (!currentPresence.EndDate.HasValue)
         {
-            if (e.ColumnIndex != ColumnButtonExit.Index)
-            {
-                e.CellStyle.BackColor = Color.Gray;
-                e.CellStyle.SelectionBackColor = Color.DimGray;
-            }
-            else
-            {
-                e.CellStyle.BackColor = e.CellStyle.SelectionBackColor = Color.LightGray;
-            }
+            return;
+        }
+
+        if (e.ColumnIndex != ColumnButtonExit.Index)
+        {
+            e.CellStyle!.BackColor = Color.Gray;
+            e.CellStyle!.SelectionBackColor = Color.DimGray;
+        }
+        else
+        {
+            e.CellStyle!.BackColor = e.CellStyle.SelectionBackColor = Color.LightGray;
         }
     }
 
@@ -173,8 +174,10 @@ public partial class FormMain : Form
 
     private void FormMain_KeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Alt && e.Control && e.Shift && e.KeyCode == Keys.X)
-            buttonLogout_Click(buttonExit, new EventArgs());
+        if (e is { Alt: true, Control: true, Shift: true, KeyCode: Keys.X })
+        {
+            buttonLogout_Click(buttonExit, EventArgs.Empty);
+        }
     }
 
     private void pictureBoxFace_Click(object sender, EventArgs e)
@@ -194,34 +197,26 @@ public partial class FormMain : Form
 
     private void ReadConfiguration()
     {
-        if (!int.TryParse(ConfigurationManager.AppSettings["DetectionSize"], out _detectionSize))
-            _detectionSize = 20;
-        if (!int.TryParse(ConfigurationManager.AppSettings["DetectionNeighbors"], out _detectionNeighbors))
-            _detectionNeighbors = 5;
-        _printerDeviceInfo = ConfigurationManager.AppSettings["PrinterDeviceInfo"];
-        if (!int.TryParse(ConfigurationManager.AppSettings["Width"], out _width))
-            _width = 640;
-        if (!int.TryParse(ConfigurationManager.AppSettings["Height"], out _height))
-            _height = 480;
-        if (!double.TryParse(ConfigurationManager.AppSettings["DetectionScaleFactor"], out _detectionScaleFactor))
-            _detectionScaleFactor = 1.2;
-        if (!int.TryParse(ConfigurationManager.AppSettings["FrameSkip"], out _frameSkip))
-            _frameSkip = 0;
-        _faceFileName = ConfigurationManager.AppSettings["FaceFileName"] ?? "lbpcascade_frontalface.xml";
-        _cameraStreamUrl = ConfigurationManager.AppSettings["CameraStreamUrl"];
-        _cameraUsername = ConfigurationManager.AppSettings["CameraUsername"];
-        _cameraPassword = ConfigurationManager.AppSettings["CameraPassword"];
-        _cameraDeviceName = ConfigurationManager.AppSettings["CameraDeviceName"];
-        bool.TryParse(ConfigurationManager.AppSettings["AllowExit"], out _allowExit);
-        buttonExit.Visible = _allowExit;
-        bool.TryParse(ConfigurationManager.AppSettings["AlwaysOnTop"], out _alwaysOnTop);
-        TopMost = _alwaysOnTop;
-        bool.TryParse(ConfigurationManager.AppSettings["IsMotionDetected"], out _isMotionDetected);
-        if (!Guid.TryParse(ConfigurationManager.AppSettings["GateId"], out _gateId)) return;
+        _printerDeviceInfo = _configuration.GetValue("GlobalSettings:PrinterDeviceInfo", defaultValue: string.Empty)!;
+        _gateId = new Guid(_configuration.GetValue("GlobalSettings:GateId", defaultValue: "DF3113F8-09A9-4B0F-9DD7-0843EC4F4A5C")!);
+        _alwaysOnTop = _configuration.GetValue<bool>("GlobalSettings:AlwaysOnTop");
+        _allowExit = _configuration.GetValue<bool>("GlobalSettings:AllowExit");
+        _cameraStreamUrl = _configuration.GetValue("FaceDetectionSettings:CameraStreamUrl", defaultValue: string.Empty)!;
+        _cameraUsername = _configuration.GetValue("FaceDetectionSettings:CameraUsername", defaultValue: string.Empty)!;
+        _cameraPassword = _configuration.GetValue("FaceDetectionSettings:CameraPassword", defaultValue: string.Empty)!;
+        _cameraDeviceName = _configuration.GetValue("FaceDetectionSettings:CameraDeviceName", defaultValue: string.Empty)!;
+        _isMotionDetected = _configuration.GetValue<bool>("FaceDetectionSettings:IsMotionDetected");
+        _faceFileName = @"Resources\" + _configuration.GetValue("FaceDetectionSettings:FaceFileName", defaultValue: "lbpcascade_frontalface.xml")!;
+        _detectionNeighbors = _configuration.GetValue("FaceDetectionSettings:DetectionNeighbors", defaultValue: 5);
+        _detectionSize = _configuration.GetValue("FaceDetectionSettings:DetectionSize", defaultValue: 20);
+        _detectionScaleFactor = _configuration.GetValue("FaceDetectionSettings:DetectionScaleFactor", defaultValue: 1.2);
+        _width = _configuration.GetValue("FaceDetectionSettings:Width", defaultValue: 640);
+        _height = _configuration.GetValue("FaceDetectionSettings:Height", defaultValue: 480);
+        
         var gate = _dbContext.Gates.SingleOrDefault(g => g.Id == _gateId);
         if (gate == null)
         {
-            MessageBox.Show("خطا در انتخاب ورودی");
+            MessageBox.Show(@"خطا در انتخاب ورودی");
             Application.Exit();
             Environment.Exit(0);
         }
@@ -229,7 +224,10 @@ public partial class FormMain : Form
         {
             Globals.Gate = gate;
         }
-
+        
+        TopMost = _alwaysOnTop;
+        buttonExit.Visible = _allowExit;
+        
         _cascadeClassifier = new CascadeClassifier(_faceFileName);
         _backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
     }
@@ -311,11 +309,10 @@ public partial class FormMain : Form
         {
             return;
         }
+
         var frame = new Mat();
         _videoCapture.Retrieve(frame);
-
-
-
+        
         if (frame.Width > _width)
         {
             CvInvoke.Resize(frame, frame, new Size(_width, _height), 2, 2, Inter.Linear);
@@ -362,7 +359,6 @@ public partial class FormMain : Form
         else
         {
             CvInvoke.CvtColor(inputImage, gray, ColorConversion.Bgr2Gray);
-
         }
 
         CvInvoke.EqualizeHist(gray, gray);
@@ -372,8 +368,7 @@ public partial class FormMain : Form
             gray,
             _detectionScaleFactor,
             _detectionNeighbors,
-            new Size(_detectionSize, _detectionSize),
-            new Size());
+            new Size(_detectionSize, _detectionSize));
 
         foreach (var f in facesDetected)
         {
@@ -400,11 +395,15 @@ public partial class FormMain : Form
     private void Print()
     {
         if (_streams == null || _streams.Count == 0)
+        {
             throw new Exception("Error: no stream to print.");
+        }
 
         var printDoc = new PrintDocument();
         if (!printDoc.PrinterSettings.IsValid)
+        {
             throw new Exception("Error: cannot find the default printer.");
+        }
 
         printDoc.PrintPage += PrintPage;
         _currentPageIndex = 0;
@@ -440,8 +439,8 @@ public partial class FormMain : Form
             ev.PageBounds.Width,
             ev.PageBounds.Height);
 
-        ev.Graphics.FillRectangle(Brushes.White, adjustedRect);
-        ev.Graphics.DrawImage(pageImage, adjustedRect);
+        ev.Graphics!.FillRectangle(Brushes.White, adjustedRect);
+        ev.Graphics!.DrawImage(pageImage, adjustedRect);
 
         _currentPageIndex++;
         ev.HasMorePages = (_currentPageIndex < _streams.Count);
@@ -466,7 +465,7 @@ public partial class FormMain : Form
             Host = (Host)comboBoxHosts.SelectedValue!,
             StartDate = DateTime.Now,
             RegistrarUsername = Globals.User.Username,
-            Gate = Globals.Gate
+            Gate = Globals.Gate!
         };
 
         if (pictureBoxFace.Image != null)
@@ -499,21 +498,16 @@ public partial class FormMain : Form
     private void FillHostsComboBox()
     {
         comboBoxHosts.DisplayMember = "Name";
-        comboBoxHosts.DataSource = (from h in _dbContext.Hosts
-                                    where h.GateId == Globals.Gate.Id
-                                    orderby h.Name
-                                    select h).ToList();
+        comboBoxHosts.DataSource = _dbContext.Hosts.Where(h => h.GateId == Globals.Gate!.Id).OrderBy(h => h.Name).ToList();
     }
 
     private void LoadTodayPresences()
     {
         _today = DateTime.Now.Date;
         var tomorrow = _today.AddDays(1);
-
-        var list = (from p in _dbContext.Presences
-                    where p.StartDate >= _today && p.StartDate < tomorrow && p.GateId == Globals.Gate.Id
-                    orderby p.StartDate descending
-                    select p).ToList();
+        var list = _dbContext.Presences
+            .Where(p => p.StartDate >= _today && p.StartDate < tomorrow && p.GateId == Globals.Gate.Id)
+            .OrderByDescending(p => p.StartDate).ToList();
 
         bindingSourceTodayPresences.DataSource = list;
         VisitorsCount = list.Count;
@@ -523,18 +517,17 @@ public partial class FormMain : Form
     {
         string yourPath = Environment.CurrentDirectory + @"\help\help.chm";
 
-        if (File.Exists(yourPath))
+        if (!File.Exists(yourPath))
         {
-            Help.ShowHelp(this, yourPath);
+            MessageBox.Show(@"فایل راهنما موجود نمی باشد.‏");
+            return;
         }
-        else
-        {
-            MessageBox.Show("فایل راهنما موجود نمی باشد.‏");
-        }
+
+        Help.ShowHelp(this, yourPath);
     }
 
     private void UpdateLabels()
     {
-        labelVisitorsCount.Text = "تعداد مراجعین " + VisitorsCount;
+        labelVisitorsCount.Text = @"تعداد مراجعین " + VisitorsCount;
     }
 }

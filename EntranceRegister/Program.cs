@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using EntranceRegister.Models;
 using Microsoft.Extensions.Configuration;
+using System.Configuration;
 
 namespace EntranceRegister;
 
@@ -39,11 +40,14 @@ internal static class Program
         var formLogin = new FormLogin(dbContext);
         if (formLogin.ShowDialog() == DialogResult.OK)
         {
-            // Globals.User = formLogin.User;
             if (Globals.GatewayExists)
-                Application.Run(new FormMain(dbContext));
+            {
+                Application.Run(new FormMain(dbContext, configuration));
+            }
             else
+            {
                 Application.Run(new FormReport(dbContext));
+            }
         }
         else
         {
