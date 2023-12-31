@@ -6,12 +6,15 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using EntranceRegister.Models;
-using Microsoft.Reporting.WinForms;
+// using Microsoft.Reporting.WinForms;
 using Stream = System.IO.Stream;
 using Application = System.Windows.Forms.Application;
 using Microsoft.Extensions.Configuration;
 using Emgu.CV.Face;
 using System.Threading;
+using Microsoft.Reporting.WinForms;
+
+// using Microsoft.Reporting.NETCore;
 
 namespace EntranceRegister;
 
@@ -348,10 +351,10 @@ public partial class FormMain : Form
         return inputImage.ToBitmap().Clone(new Rectangle(0, 0, inputImage.Width, inputImage.Height), PixelFormat.DontCare);
     }
 
-    private void Export(LocalReport report)
+    private void Export(Report report)
     {
         _streams = new List<Stream>();
-        report.Render("Image", _printerDeviceInfo, CreateStream, out Warning[] _);
+        _streams.Add(new MemoryStream(report.Render("Image", _printerDeviceInfo)));
         foreach (var stream in _streams)
         {
             stream.Position = 0;
@@ -382,7 +385,7 @@ public partial class FormMain : Form
         {
             ReportPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\Card.rdlc"
         };
-
+        
         report.DataSources.Add(new ReportDataSource("DataSetPresence", new BindingSource(presence, null)));
         Export(report);
         Print();
