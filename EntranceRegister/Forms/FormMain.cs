@@ -11,6 +11,7 @@ using Stream = System.IO.Stream;
 using Application = System.Windows.Forms.Application;
 using Microsoft.Extensions.Configuration;
 using Emgu.CV.Face;
+using System.Threading;
 
 namespace EntranceRegister;
 
@@ -43,12 +44,13 @@ public partial class FormMain : Form
     private int _visitorsCount;
     private CascadeClassifier _cascadeClassifier;
     private BackgroundSubtractorMOG2 _backgroundSubtractor;
+    private CancellationTokenSource _cancellationTokenSource;
 
     private VideoCapture _videoCapture;
 
     public int VisitorsCount
     {
-        get { return _visitorsCount; }
+        get => _visitorsCount;
         set
         {
             _visitorsCount = value;
@@ -61,6 +63,7 @@ public partial class FormMain : Form
         InitializeComponent();
         _dbContext = dbContext;
         _configuration = configuration;
+        _cancellationTokenSource = new CancellationTokenSource();
         ReadConfiguration();
 
     }
@@ -107,19 +110,13 @@ public partial class FormMain : Form
 
     private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if (e.CloseReason == CloseReason.UserClosing)
-            e.Cancel = true;
-        else
+        try
         {
-            try
-            {
-                // _camera.Stop();
-                // _camera.NewFrame -= ProcessFrame;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            _cancellationTokenSource.Cancel();
+        }
+        catch (Exception)
+        {
+            // ignored
         }
     }
 
@@ -212,7 +209,7 @@ public partial class FormMain : Form
         _detectionScaleFactor = _configuration.GetValue("FaceDetectionSettings:DetectionScaleFactor", defaultValue: 1.2);
         _width = _configuration.GetValue("FaceDetectionSettings:Width", defaultValue: 640);
         _height = _configuration.GetValue("FaceDetectionSettings:Height", defaultValue: 480);
-        
+
         var gate = _dbContext.Gates.SingleOrDefault(g => g.Id == _gateId);
         if (gate == null)
         {
@@ -224,10 +221,10 @@ public partial class FormMain : Form
         {
             Globals.Gate = gate;
         }
-        
+
         TopMost = _alwaysOnTop;
         buttonExit.Visible = _allowExit;
-        
+
         _cascadeClassifier = new CascadeClassifier(_faceFileName);
         _backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
     }
@@ -244,7 +241,7 @@ public partial class FormMain : Form
         _dbContext.SaveChanges();
     }
 
-    private void CaptureCamera()
+    private async void CaptureCamera()
     {
         try
         {
@@ -256,44 +253,15 @@ public partial class FormMain : Form
             else
             {
                 _videoCapture = new VideoCapture(1);
-                if (_videoCapture.IsOpened)
-                {
-                    MessageBox.Show("دوربینی به سیستم متصل نیست.", "خطا", MessageBoxButtons.OK);
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(_cameraDeviceName))
-                {
-                    // var captureDevice = new VideoCaptureDevice(videoCaptureDevices[0].MonikerString);
-                    // foreach (var capability in captureDevice.VideoCapabilities)
-                    // {
-                    //     if (capability.FrameSize.Width == _width || capability.FrameSize.Height == _height)
-                    //         captureDevice.VideoResolution = capability;
-                    //
-                    //     if (capability.FrameSize.Width == _width && capability.FrameSize.Height == _height)
-                    //         break;
-                    // }
-                    // _camera = captureDevice;
-                }
-                else
-                {
-                    // foreach (FilterInfo device in videoCaptureDevices)
-                    //     if (device.Name == _cameraDeviceName)
-                    //     {
-                    //         _camera = new VideoCaptureDevice(device.MonikerString);
-                    //         break;
-                    //     }
-                    //
-                    // if (_camera == null)
-                    // {
-                    //     MessageBox.Show("دوربین به سیستم متصل نیست: " + _cameraDeviceName, "خطا",
-                    //         MessageBoxButtons.OK);
-                    //     return;
-                    // }
-                }
             }
 
-            _videoCapture.ImageGrabbed += ProcessFrame;
+            if (!_videoCapture.IsOpened)
+            {
+                MessageBox.Show("دوربینی به سیستم متصل نیست.", "خطا", MessageBoxButtons.OK);
+                return;
+            }
+
+            await Task.Run(() => ProcessFrame(_cancellationTokenSource.Token));
             // _camera.NewFrame += ProcessFrame;
             // _camera.Start();
         }
@@ -303,58 +271,57 @@ public partial class FormMain : Form
         }
     }
 
-    private void ProcessFrame(object? sender, EventArgs e)
+    private void ProcessFrame(CancellationToken cancellationToken)
     {
-        if (_frameSkip != 0 && ++_skipIndex % _frameSkip != 0)
+        using var frame = new Mat();
+        while (!cancellationToken.IsCancellationRequested && _videoCapture.IsOpened)
         {
-            return;
-        }
+            
+            if (!_videoCapture.Read(frame) || (_frameSkip != 0 && ++_skipIndex % _frameSkip != 0))
+            {
+                continue;
+            }
+            
+            if (frame.Width > _width)
+            {
+                CvInvoke.Resize(frame, frame, new Size(_width, _height), 2, 2, Inter.Linear);
+            }
 
-        var frame = new Mat();
-        _videoCapture.Retrieve(frame);
-        
-        if (frame.Width > _width)
-        {
-            CvInvoke.Resize(frame, frame, new Size(_width, _height), 2, 2, Inter.Linear);
-        }
+            var faces = new List<Bitmap>();
+            try
+            {
+                pictureBoxCamera.Image = DetectFace(frame, out faces);
+            }
+            catch
+            {
+                // ignored
+            }
 
-        var faces = new List<Bitmap>();
-        try
-        {
-            pictureBoxCamera.Image = DetectFace(frame, out faces);
-        }
-        catch
-        {
-            // ignored
-        }
-
-        frame.Dispose();
-
-        if (faces is { Count: > 0 })
-        {
-            _lastDetectedFaces = faces;
+            if (faces is { Count: > 0 })
+            {
+                _lastDetectedFaces = faces;
+            }
         }
     }
 
     private Bitmap DetectFace(Mat inputImage, out List<Bitmap> outputFaces)
     {
         outputFaces = new List<Bitmap>();
-        var gray = new Mat();
-
+        
+        using var gray = new Mat();
         if (_isMotionDetected)
         {
-            var resizedImage = new Mat();
+            using var resizedImage = new Mat();
             CvInvoke.Resize(inputImage, resizedImage, new Size(_width, _height), 2, 2, Inter.Linear);
             CvInvoke.GaussianBlur(resizedImage, resizedImage, new Size(7, 7), 0, 0);
 
             _backgroundSubtractor.Apply(resizedImage, gray);
-            resizedImage.Dispose();
             CvInvoke.Threshold(gray, gray, 50, 1, ThresholdType.Binary);
             CvInvoke.Dilate(gray, gray, null,
                 new Point(-1, -1), 7, BorderType.Default, new MCvScalar(1));
             CvInvoke.Resize(gray, gray, new Size(inputImage.Width, inputImage.Height), 2, 2, Inter.Linear);
-            CvInvoke.CvtColor(inputImage, inputImage, ColorConversion.Bgr2Gray);
-            CvInvoke.Multiply(inputImage, gray, gray);
+            CvInvoke.CvtColor(inputImage, resizedImage, ColorConversion.Bgr2Gray);
+            CvInvoke.Multiply(resizedImage, gray, gray);
         }
         else
         {
@@ -378,7 +345,6 @@ public partial class FormMain : Form
             CvInvoke.Rectangle(inputImage, f, new Bgr(Color.Blue).MCvScalar, 2);
         }
 
-        gray.Dispose();
         return inputImage.ToBitmap().Clone(new Rectangle(0, 0, inputImage.Width, inputImage.Height), PixelFormat.DontCare);
     }
 
