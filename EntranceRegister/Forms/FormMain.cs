@@ -246,17 +246,17 @@ public partial class FormMain : Form
 
     private async void CaptureCamera()
     {
+        await Task.Run(() => ProcessFrame(_cancellationTokenSource.Token));
+    }
+
+    private void ProcessFrame(CancellationToken cancellationToken)
+    {
         try
         {
-            if (!string.IsNullOrEmpty(_cameraStreamUrl))
-            {
-                _videoCapture = new VideoCapture(_cameraStreamUrl);
-
-            }
-            else
-            {
-                _videoCapture = new VideoCapture(1);
-            }
+            bool isParsed = int.TryParse(_cameraStreamUrl, out var cameraId);
+            _videoCapture = !string.IsNullOrEmpty(_cameraStreamUrl)
+                ? (isParsed ? new VideoCapture(cameraId) : new VideoCapture(_cameraStreamUrl))
+                : new VideoCapture(1);
 
             if (!_videoCapture.IsOpened)
             {
@@ -264,46 +264,39 @@ public partial class FormMain : Form
                 return;
             }
 
-            await Task.Run(() => ProcessFrame(_cancellationTokenSource.Token));
-            // _camera.NewFrame += ProcessFrame;
-            // _camera.Start();
+            using var frame = new Mat();
+            while (!cancellationToken.IsCancellationRequested && _videoCapture.IsOpened)
+            {
+
+                if (!_videoCapture.Read(frame) || (_frameSkip != 0 && ++_skipIndex % _frameSkip != 0))
+                {
+                    continue;
+                }
+
+                if (frame.Width > _width)
+                {
+                    CvInvoke.Resize(frame, frame, new Size(_width, _height), 2, 2, Inter.Linear);
+                }
+
+                var faces = new List<Bitmap>();
+                try
+                {
+                    pictureBoxCamera.Image = DetectFace(frame, out faces);
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                if (faces is { Count: > 0 })
+                {
+                    _lastDetectedFaces = faces;
+                }
+            }
         }
         catch (Exception e)
         {
             MessageBox.Show("خطا در اتصال به دوربین: " + e.Message, "خطا", MessageBoxButtons.OK);
-        }
-    }
-
-    private void ProcessFrame(CancellationToken cancellationToken)
-    {
-        using var frame = new Mat();
-        while (!cancellationToken.IsCancellationRequested && _videoCapture.IsOpened)
-        {
-            
-            if (!_videoCapture.Read(frame) || (_frameSkip != 0 && ++_skipIndex % _frameSkip != 0))
-            {
-                continue;
-            }
-            
-            if (frame.Width > _width)
-            {
-                CvInvoke.Resize(frame, frame, new Size(_width, _height), 2, 2, Inter.Linear);
-            }
-
-            var faces = new List<Bitmap>();
-            try
-            {
-                pictureBoxCamera.Image = DetectFace(frame, out faces);
-            }
-            catch
-            {
-                // ignored
-            }
-
-            if (faces is { Count: > 0 })
-            {
-                _lastDetectedFaces = faces;
-            }
         }
     }
 
@@ -381,9 +374,11 @@ public partial class FormMain : Form
 
     private void PrintCard(Presence presence)
     {
+        
+        
         var report = new LocalReport
         {
-            ReportPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\Card.rdlc"
+            ReportPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\Resources\Card.rdlc"
         };
         
         report.DataSources.Add(new ReportDataSource("DataSetPresence", new BindingSource(presence, null)));
