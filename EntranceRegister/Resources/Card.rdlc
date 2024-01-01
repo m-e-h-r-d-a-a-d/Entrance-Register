@@ -199,7 +199,7 @@
         </Field>
         <Field Name="Host">
           <DataField>Host</DataField>
-          <rd:TypeName>BehFarma.Model.Host</rd:TypeName>
+          <rd:TypeName>EntranceRegister.Models.Host</rd:TypeName>
         </Field>
         <Field Name="HostId">
           <DataField>HostId</DataField>
@@ -215,7 +215,7 @@
         </Field>
         <Field Name="Person">
           <DataField>Person</DataField>
-          <rd:TypeName>BehFarma.Model.Person</rd:TypeName>
+          <rd:TypeName>EntranceRegister.Models.Person</rd:TypeName>
         </Field>
         <Field Name="PersonFullname">
           <DataField>PersonFullname</DataField>
@@ -235,7 +235,7 @@
         </Field>
         <Field Name="Registrar">
           <DataField>Registrar</DataField>
-          <rd:TypeName>BehFarma.Model.User</rd:TypeName>
+          <rd:TypeName>EntranceRegister.Models.User</rd:TypeName>
         </Field>
         <Field Name="RegistrarUsername">
           <DataField>RegistrarUsername</DataField>
@@ -259,9 +259,9 @@
         </Field>
       </Fields>
       <rd:DataSetInfo>
-        <rd:DataSetName>BehFarma.Model</rd:DataSetName>
+        <rd:DataSetName>EntranceRegister.Models</rd:DataSetName>
         <rd:TableName>Presence</rd:TableName>
-        <rd:ObjectDataSourceType>BehFarma.Model.Presence, BehFarma.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:ObjectDataSourceType>EntranceRegister.Models.Presence, EntranceRegister.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
