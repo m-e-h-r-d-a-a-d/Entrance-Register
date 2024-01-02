@@ -37,8 +37,7 @@ internal static class Program
         // Get the DbContext from the service provider
         using var dbContext = serviceProvider.GetRequiredService<EntranceContext>();
 
-        var formLogin = new FormLogin(dbContext);
-        if (formLogin.ShowDialog() == DialogResult.OK)
+        if (new FormLogin(dbContext).ShowDialog() == DialogResult.OK)
         {
             if (Globals.GatewayExists)
             {

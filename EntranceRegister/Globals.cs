@@ -16,11 +16,10 @@ public static class Globals
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build();
 
-            if (configuration["GlobalSettings:GateId"] != null) return true;
-            return false;
+            return configuration["GlobalSettings:GateId"] != null;
         }
     }
 
-    public static User User { get; set; }
+    public static User? User { get; set; }
 
 }

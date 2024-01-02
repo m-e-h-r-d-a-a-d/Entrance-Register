@@ -10,8 +10,8 @@ public partial class Person
 
     public string? NationalNumber { get; set; }
 
-    public virtual Blacklist? Blacklist { get; set; }
+    public virtual Blacklist Blacklist { get; set; } = null!;
 
-    public virtual ICollection<Presence> Presences { get; set; } = new List<Presence>();
+    public virtual ICollection<Presence> Presences { get; set; } = new HashSet<Presence>();
 }
 

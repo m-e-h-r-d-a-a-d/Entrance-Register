@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Emgu.CV.Face;
 using System.Threading;
 using Microsoft.Reporting.WinForms;
+using Microsoft.EntityFrameworkCore;
 
 // using Microsoft.Reporting.NETCore;
 
@@ -142,10 +143,16 @@ public partial class FormMain : Form
     {
         var selectedPresence = (Presence)dataGridViewPresence.Rows[e.RowIndex].DataBoundItem;
         if (e.ColumnIndex == ColumnButtonReprint.Index)
+        {
             PrintCard(selectedPresence);
+        }
         else if (e.ColumnIndex == ColumnButtonExit.Index)
+        {
             if (selectedPresence.EndDate == null)
+            {
                 RegisterExit(selectedPresence);
+            }
+        }
     }
 
     private void dataGridViewPresence_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -467,11 +474,10 @@ public partial class FormMain : Form
 
     private void LoadTodayPresences()
     {
-        _today = DateTime.Now.Date;
-        var tomorrow = _today.AddDays(1);
+        _today = DateTime.Now.Date.AddDays(-2);
         var list = _dbContext.Presences
-            .Where(p => p.StartDate >= _today && p.StartDate < tomorrow && p.GateId == Globals.Gate.Id)
-            .OrderByDescending(p => p.StartDate).ToList();
+            .Where(p => p.StartDate >= _today && p.StartDate < _today.AddDays(1) && p.GateId == Globals.Gate!.Id)
+            .OrderByDescending(p => p.StartDate).Include(b => b.Person).ToList();
 
         bindingSourceTodayPresences.DataSource = list;
         VisitorsCount = list.Count;
