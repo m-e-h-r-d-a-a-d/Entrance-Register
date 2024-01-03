@@ -5,7 +5,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Color = System.Drawing.Color;
 
-namespace EntranceRegister;
+namespace EntranceRegister.Forms;
 
 public partial class FormReport : Form
 {
@@ -32,7 +32,9 @@ public partial class FormReport : Form
     private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
     {
         if (e.CloseReason == CloseReason.UserClosing)
+        {
             e.Cancel = true;
+        }
     }
 
     private void buttonLogout_Click(object sender, EventArgs e)
@@ -67,10 +69,10 @@ public partial class FormReport : Form
 
     private void buttonExport_Click(object sender, EventArgs e)
     {
-        ExportToExcel((bindingSourcePresences.DataSource as List<Presence>)!);
+        ExportToExcel(bindingSourcePresences.DataSource as List<Presence>);
     }
 
-    private void ExportToExcel(IReadOnlyCollection<Presence> list)
+    private void ExportToExcel(IReadOnlyCollection<Presence>? list)
     {
         if (list == null || list.Count == 0)
         {
@@ -188,25 +190,33 @@ public partial class FormReport : Form
 
     private void buttonLogOut_Click_1(object sender, EventArgs e)
     {
-        if (MessageBox.Show(@"آیا مطمئنید؟", @"خروج از سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+        if (MessageBox.Show(@"آیا مطمئنید؟", @"خروج از سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
+            DialogResult.OK)
+        {
             Application.Exit();
+        }
     }
 
     private void buttonShutdown_Click(object sender, EventArgs e)
     {
-        if (MessageBox.Show(@"آیا مطمئنید؟", @"خاموش کردن سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+        if (MessageBox.Show(@"آیا مطمئنید؟", @"خاموش کردن سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) ==
+            DialogResult.OK)
+        {
             Process.Start("shutdown", "/s /t 0");
+        }
     }
 
     private void buttonHelp_Click(object sender, EventArgs e)
     {
-        string yourpath = Environment.CurrentDirectory + @"\help\help.chm";
-        if (File.Exists(yourpath))
+        string yourPath = @"Resources\help.chm";
+        if (File.Exists(yourPath))
         {
-            Help.ShowHelp(this, yourpath);
+            Help.ShowHelp(this, yourPath);
         }
         else
+        {
             MessageBox.Show(@"فایل راهنما موجود نمی باشد.‏");
+        }
     }
 
     private void comboBoxGates_SelectedIndexChanged(object sender, EventArgs e)

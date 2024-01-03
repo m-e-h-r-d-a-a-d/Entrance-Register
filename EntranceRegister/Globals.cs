@@ -7,6 +7,7 @@ namespace EntranceRegister;
 public static class Globals
 {
     public static Gate? Gate { get; set; }
+
     public static bool GatewayExists
     {
         get

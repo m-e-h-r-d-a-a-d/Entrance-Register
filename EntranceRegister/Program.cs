@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using EntranceRegister.Models;
 using Microsoft.Extensions.Configuration;
 using System.Configuration;
+using EntranceRegister.Forms;
 
 namespace EntranceRegister;
 
@@ -22,19 +23,16 @@ internal static class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 
-        // Load configuration
         IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .Build();
 
-        // Get the connection string
         var serviceProvider = new ServiceCollection()
             .AddDbContext<EntranceContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")))
             .BuildServiceProvider();
-
-        // Get the DbContext from the service provider
+        
         using var dbContext = serviceProvider.GetRequiredService<EntranceContext>();
 
         if (new FormLogin(dbContext).ShowDialog() == DialogResult.OK)

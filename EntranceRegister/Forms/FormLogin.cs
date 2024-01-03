@@ -1,9 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using EntranceRegister.Models;
-using Microsoft.Extensions.Configuration;
 
-namespace EntranceRegister;
+namespace EntranceRegister.Forms;
 
 public partial class FormLogin : Form
 {
@@ -44,7 +43,9 @@ public partial class FormLogin : Form
     private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
     {
         if (e.CloseReason == CloseReason.UserClosing && DialogResult != DialogResult.OK)
+        {
             e.Cancel = true;
+        }
     }
 
     protected override void OnResize(EventArgs e)
