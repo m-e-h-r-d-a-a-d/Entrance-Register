@@ -12,8 +12,7 @@ public static class DateUtils
     public static string ToPersianDateString(DateTime dateTime)
     {
         var persianCalendar = new PersianCalendar();
-        var persianDateString = $"{persianCalendar.GetYear(dateTime)}/{persianCalendar.GetMonth(dateTime):00}/{persianCalendar.GetDayOfMonth(dateTime):00}";
-        return persianDateString;
+        return $"{persianCalendar.GetYear(dateTime)}/{persianCalendar.GetMonth(dateTime):00}/{persianCalendar.GetDayOfMonth(dateTime):00}";
     }
 
     public static string ToPersianTimeString(DateTime dateTime)
@@ -47,8 +46,7 @@ public static class DateUtils
         {
             var parts = text.Split('/');
             var calendar = new PersianCalendar();
-            var dateTime = calendar.ToDateTime(Convert.ToInt32(parts[0]), Convert.ToInt32(parts[1]), Convert.ToInt32(parts[2]), 0, 0, 0, 0);
-            return dateTime;
+            return calendar.ToDateTime(Convert.ToInt32(parts[0]), Convert.ToInt32(parts[1]), Convert.ToInt32(parts[2]), 0, 0, 0, 0);
         }
         catch
         {

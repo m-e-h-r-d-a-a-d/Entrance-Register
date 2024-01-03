@@ -5,19 +5,17 @@ using System.Text;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using Emgu.CV.Dnn;
 using EntranceRegister.Models;
-// using Microsoft.Reporting.WinForms;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Reporting.WinForms;
 using Stream = System.IO.Stream;
 using Application = System.Windows.Forms.Application;
-using Microsoft.Extensions.Configuration;
-using Emgu.CV.Face;
-using System.Threading;
-using Microsoft.Reporting.WinForms;
-using Microsoft.EntityFrameworkCore;
+using Emgu.CV.Linemod;
 
-// using Microsoft.Reporting.NETCore;
 
-namespace EntranceRegister;
+namespace EntranceRegister.Forms;
 
 public partial class FormMain : Form
 {
@@ -47,10 +45,11 @@ public partial class FormMain : Form
     private Guid _gateId;
     private int _visitorsCount;
     private CascadeClassifier _cascadeClassifier;
+    private FaceDetectorYN _faceDetectorYN;
     private BackgroundSubtractorMOG2 _backgroundSubtractor;
-    private CancellationTokenSource _cancellationTokenSource;
+    private readonly CancellationTokenSource _cancellationTokenSource;
 
-    private VideoCapture _videoCapture;
+    private VideoCapture? _videoCapture;
 
     public int VisitorsCount
     {
@@ -64,10 +63,10 @@ public partial class FormMain : Form
 
     public FormMain(EntranceContext dbContext, IConfigurationRoot configuration)
     {
-        InitializeComponent();
         _dbContext = dbContext;
         _configuration = configuration;
         _cancellationTokenSource = new CancellationTokenSource();
+        InitializeComponent();
         ReadConfiguration();
 
     }
@@ -128,7 +127,9 @@ public partial class FormMain : Form
     {
         if (MessageBox.Show(@"آیا مطمئنید؟", @"خروج از سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
             DialogResult.OK)
+        {
             Application.Exit();
+        }
     }
 
     private void buttonShutdown_Click(object sender, EventArgs e)
@@ -136,7 +137,9 @@ public partial class FormMain : Form
         if (
             MessageBox.Show(@"آیا مطمئنید؟", @"خاموش کردن سیستم", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) ==
             DialogResult.OK)
+        {
             Process.Start("shutdown", "/s /t 0");
+        }
     }
 
     private void dataGridViewPresence_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -236,6 +239,7 @@ public partial class FormMain : Form
         buttonExit.Visible = _allowExit;
 
         _cascadeClassifier = new CascadeClassifier(_faceFileName);
+        _faceDetectorYN = new FaceDetectorYN(@"Resources\face_detection_yunet_2023mar.onnx", "", new Size(320, 320));
         _backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
     }
 
@@ -258,64 +262,61 @@ public partial class FormMain : Form
 
     private void ProcessFrame(CancellationToken cancellationToken)
     {
-        try
+        bool isParsed = int.TryParse(_cameraStreamUrl, out var cameraId);
+
+        using var frame = new Mat();
+        while (!cancellationToken.IsCancellationRequested)
         {
-            bool isParsed = int.TryParse(_cameraStreamUrl, out var cameraId);
-            _videoCapture = !string.IsNullOrEmpty(_cameraStreamUrl)
-                ? (isParsed ? new VideoCapture(cameraId) : new VideoCapture(_cameraStreamUrl))
-                : new VideoCapture(1);
-
-            if (!_videoCapture.IsOpened)
+            try
             {
-                MessageBox.Show("دوربینی به سیستم متصل نیست.", "خطا", MessageBoxButtons.OK);
-                return;
-            }
+                if (_videoCapture is not { IsOpened: true } || !_videoCapture.Read(frame) || frame.GetData() == null)
+                {
+                    if (_videoCapture != null)
+                    {
+                        MessageBox.Show(@"دوربینی به سیستم متصل نیست.", @"خطا", MessageBoxButtons.OK);
+                    }
 
-            using var frame = new Mat();
-            while (!cancellationToken.IsCancellationRequested && _videoCapture.IsOpened)
-            {
+                    _videoCapture = !string.IsNullOrEmpty(_cameraStreamUrl)
+                        ? (isParsed ? new VideoCapture(cameraId) : new VideoCapture(_cameraStreamUrl))
+                        : new VideoCapture(1);
+                    continue;
+                }
 
-                if (!_videoCapture.Read(frame) || (_frameSkip != 0 && ++_skipIndex % _frameSkip != 0))
+                if (_frameSkip != 0 && ++_skipIndex % _frameSkip != 0)
                 {
                     continue;
                 }
 
                 if (frame.Width > _width)
                 {
-                    CvInvoke.Resize(frame, frame, new Size(_width, _height), 2, 2, Inter.Linear);
+                    double scale = (double)_width / frame.Width;
+                    CvInvoke.Resize(frame, frame, new Size((int)(scale * frame.Width), (int)(scale * frame.Height)), 2, 2, Inter.Linear);
                 }
 
-                var faces = new List<Bitmap>();
-                try
-                {
-                    pictureBoxCamera.Image = DetectFace(frame, out faces);
-                }
-                catch
-                {
-                    // ignored
-                }
-
+                pictureBoxCamera.Image = DetectFace(frame, out var faces);
+                
                 if (faces is { Count: > 0 })
                 {
                     _lastDetectedFaces = faces;
                 }
             }
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show("خطا در اتصال به دوربین: " + e.Message, "خطا", MessageBoxButtons.OK);
+            catch
+            {
+                // ignored
+            }
         }
     }
 
     private Bitmap DetectFace(Mat inputImage, out List<Bitmap> outputFaces)
     {
         outputFaces = new List<Bitmap>();
-        
+
         using var gray = new Mat();
         if (_isMotionDetected)
         {
+            double scale = 150.0 / inputImage.Width;
             using var resizedImage = new Mat();
-            CvInvoke.Resize(inputImage, resizedImage, new Size(_width, _height), 2, 2, Inter.Linear);
+            CvInvoke.Resize(inputImage, resizedImage, new Size((int)(scale * inputImage.Width), (int)(scale * inputImage.Height)), 2, 2, Inter.Linear);
             CvInvoke.GaussianBlur(resizedImage, resizedImage, new Size(7, 7), 0, 0);
 
             _backgroundSubtractor.Apply(resizedImage, gray);
@@ -332,7 +333,6 @@ public partial class FormMain : Form
         }
 
         CvInvoke.EqualizeHist(gray, gray);
-
 
         var facesDetected = _cascadeClassifier.DetectMultiScale(
             gray,
@@ -381,23 +381,14 @@ public partial class FormMain : Form
 
     private void PrintCard(Presence presence)
     {
-        
-        
         var report = new LocalReport
         {
-            ReportPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\Resources\Card.rdlc"
+            ReportPath = @"Resources\Card.rdlc"
         };
-        
+
         report.DataSources.Add(new ReportDataSource("DataSetPresence", new BindingSource(presence, null)));
         Export(report);
         Print();
-    }
-
-    private Stream CreateStream(string name, string fileNameExtension, Encoding encoding, string mimeType, bool willSeek)
-    {
-        Stream stream = new MemoryStream();
-        _streams.Add(stream);
-        return stream;
     }
 
     private void PrintPage(object sender, PrintPageEventArgs ev)
@@ -474,7 +465,7 @@ public partial class FormMain : Form
 
     private void LoadTodayPresences()
     {
-        _today = DateTime.Now.Date.AddDays(-2);
+        _today = DateTime.Now.Date.AddDays(-4);
         var list = _dbContext.Presences
             .Where(p => p.StartDate >= _today && p.StartDate < _today.AddDays(1) && p.GateId == Globals.Gate!.Id)
             .OrderByDescending(p => p.StartDate).Include(b => b.Person).ToList();
@@ -485,15 +476,15 @@ public partial class FormMain : Form
 
     private void buttonHelp_Click(object sender, EventArgs e)
     {
-        string yourPath = Environment.CurrentDirectory + @"\help\help.chm";
-
-        if (!File.Exists(yourPath))
+        string yourPath = @"Resources\help.chm";
+        if (File.Exists(yourPath))
+        {
+            Help.ShowHelp(this, yourPath);
+        }
+        else
         {
             MessageBox.Show(@"فایل راهنما موجود نمی باشد.‏");
-            return;
         }
-
-        Help.ShowHelp(this, yourPath);
     }
 
     private void UpdateLabels()

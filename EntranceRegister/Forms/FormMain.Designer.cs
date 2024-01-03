@@ -1,6 +1,6 @@
 ﻿using EntranceRegister.Models;
 
-namespace EntranceRegister;
+namespace EntranceRegister.Forms;
 
 partial class FormMain
 {
