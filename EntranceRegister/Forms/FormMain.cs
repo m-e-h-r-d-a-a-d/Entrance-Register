@@ -1,11 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
-using System.Drawing.Printing;
-using System.Text;
-using Emgu.CV;
+using System.Drawing.Printing;using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using Emgu.CV.Dnn;
 using EntranceRegister.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +10,7 @@ using Microsoft.Reporting.WinForms;
 using Stream = System.IO.Stream;
 using Application = System.Windows.Forms.Application;
 using Emgu.CV.Linemod;
+using System.Runtime.InteropServices;
 
 
 namespace EntranceRegister.Forms;
@@ -240,6 +238,7 @@ public partial class FormMain : Form
 
         _cascadeClassifier = new CascadeClassifier(_faceFileName);
         _faceDetectorYN = new FaceDetectorYN(@"Resources\face_detection_yunet_2023mar.onnx", "", new Size(320, 320));
+        _faceDetectorYN.InputSize = new Size(_width, _height);
         _backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
     }
 
@@ -294,7 +293,7 @@ public partial class FormMain : Form
                 }
 
                 pictureBoxCamera.Image = DetectFace(frame, out var faces);
-                
+
                 if (faces is { Count: > 0 })
                 {
                     _lastDetectedFaces = faces;
@@ -307,7 +306,7 @@ public partial class FormMain : Form
         }
     }
 
-    private Bitmap DetectFace(Mat inputImage, out List<Bitmap> outputFaces)
+    private Bitmap DetectFaceOld(Mat inputImage, out List<Bitmap> outputFaces)
     {
         outputFaces = new List<Bitmap>();
 
@@ -350,6 +349,84 @@ public partial class FormMain : Form
 
         return inputImage.ToBitmap().Clone(new Rectangle(0, 0, inputImage.Width, inputImage.Height), PixelFormat.DontCare);
     }
+
+    private Bitmap DetectFace(Mat inputImage, out List<Bitmap> outputFaces)
+    {
+
+
+        using var faces = new Mat();
+        outputFaces = new List<Bitmap>();
+        _faceDetectorYN.Detect(inputImage, faces);
+        for (int i = 0; i < faces.Rows; i++)
+        {
+            var faceRect = new Rectangle((int)GetValue(faces, i, 0), (int)GetValue(faces, i, 1),
+                (int)GetValue(faces, i, 2), (int)GetValue(faces, i, 3));
+            int x = Math.Min(Math.Min(faceRect.Width / 10, faceRect.X), inputImage.Width - faceRect.Right);
+            int y = Math.Min(Math.Min(faceRect.Height / 5, faceRect.Y), inputImage.Height - faceRect.Bottom);
+            outputFaces.Add(inputImage.ToBitmap().Clone(Rectangle.Inflate(faceRect, x, y), PixelFormat.DontCare));
+            CvInvoke.Rectangle(inputImage, faceRect, new Bgr(Color.Blue).MCvScalar, 2);
+        }
+
+        return inputImage.ToBitmap().Clone(new Rectangle(0, 0, inputImage.Width, inputImage.Height), PixelFormat.DontCare);
+    }
+
+
+    private void Visualize(Mat input, Mat faces, double fps = 30, int thickness = 2)
+    {
+        for (int i = 0; i < faces.Rows; i++)
+        {
+
+            // Draw bounding box
+            CvInvoke.Rectangle(input, new Rectangle((int)GetValue(faces, i, 0), (int)GetValue(faces, i, 1), (int)GetValue(faces, i, 2), (int)GetValue(faces, i, 3)), new Bgr(Color.Blue).MCvScalar, thickness);
+            // // Draw landmarks
+            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 4), (int)GetValue(faces, i, 5)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 6), (int)GetValue(faces, i, 7)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 8), (int)GetValue(faces, i, 9)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 10), (int)GetValue(faces, i, 11)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 12), (int)GetValue(faces, i, 13)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+        }
+    }
+
+    public dynamic GetValue(Mat mat, int row, int col)
+    {
+        var value = CreateElement(mat.Depth);
+        Marshal.Copy(mat.DataPointer + (row * mat.Cols + col) * mat.ElementSize, value, 0, 1);
+        return value[0];
+    }
+
+    private dynamic CreateElement(DepthType depthType)
+    {
+        if (depthType == DepthType.Cv8S)
+        {
+            return new sbyte[1];
+        }
+        if (depthType == DepthType.Cv8U)
+        {
+            return new byte[1];
+        }
+        if (depthType == DepthType.Cv16S)
+        {
+            return new short[1];
+        }
+        if (depthType == DepthType.Cv16U)
+        {
+            return new ushort[1];
+        }
+        if (depthType == DepthType.Cv32S)
+        {
+            return new int[1];
+        }
+        if (depthType == DepthType.Cv32F)
+        {
+            return new float[1];
+        }
+        if (depthType == DepthType.Cv64F)
+        {
+            return new double[1];
+        }
+        return new float[1];
+    }
+
 
     private void Export(Report report)
     {
@@ -476,7 +553,7 @@ public partial class FormMain : Form
 
     private void buttonHelp_Click(object sender, EventArgs e)
     {
-        string yourPath = @"Resources\help.chm";
+        string yourPath = @"help.chm";
         if (File.Exists(yourPath))
         {
             Help.ShowHelp(this, yourPath);

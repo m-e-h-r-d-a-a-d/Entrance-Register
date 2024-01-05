@@ -208,7 +208,7 @@ public partial class FormReport : Form
 
     private void buttonHelp_Click(object sender, EventArgs e)
     {
-        string yourPath = @"Resources\help.chm";
+        string yourPath = @"help.chm";
         if (File.Exists(yourPath))
         {
             Help.ShowHelp(this, yourPath);
