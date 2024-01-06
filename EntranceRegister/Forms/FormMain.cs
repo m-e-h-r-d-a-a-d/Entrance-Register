@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
-using System.Drawing.Printing;using Emgu.CV;
+using System.Drawing.Printing;
+using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using EntranceRegister.Models;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.WinForms;
 using Stream = System.IO.Stream;
 using Application = System.Windows.Forms.Application;
-using Emgu.CV.Linemod;
 using System.Runtime.InteropServices;
 
 
@@ -33,6 +33,7 @@ public partial class FormMain : Form
     private string _cameraPassword;
     private string _cameraDeviceName;
     private double _detectionScaleFactor;
+    private int _detectionType;
     private int _facesIndex;
     private int _frameSkip;
     private int _skipIndex;
@@ -207,19 +208,21 @@ public partial class FormMain : Form
     {
         _printerDeviceInfo = _configuration.GetValue("GlobalSettings:PrinterDeviceInfo", defaultValue: string.Empty)!;
         _gateId = new Guid(_configuration.GetValue("GlobalSettings:GateId", defaultValue: "DF3113F8-09A9-4B0F-9DD7-0843EC4F4A5C")!);
-        _alwaysOnTop = _configuration.GetValue<bool>("GlobalSettings:AlwaysOnTop");
-        _allowExit = _configuration.GetValue<bool>("GlobalSettings:AllowExit");
+        _alwaysOnTop = _configuration.GetValue("GlobalSettings:AlwaysOnTop", defaultValue:false);
+        _allowExit = _configuration.GetValue("GlobalSettings:AllowExit", defaultValue: true);
         _cameraStreamUrl = _configuration.GetValue("FaceDetectionSettings:CameraStreamUrl", defaultValue: string.Empty)!;
         _cameraUsername = _configuration.GetValue("FaceDetectionSettings:CameraUsername", defaultValue: string.Empty)!;
         _cameraPassword = _configuration.GetValue("FaceDetectionSettings:CameraPassword", defaultValue: string.Empty)!;
         _cameraDeviceName = _configuration.GetValue("FaceDetectionSettings:CameraDeviceName", defaultValue: string.Empty)!;
-        _isMotionDetected = _configuration.GetValue<bool>("FaceDetectionSettings:IsMotionDetected");
-        _faceFileName = @"Resources\" + _configuration.GetValue("FaceDetectionSettings:FaceFileName", defaultValue: "lbpcascade_frontalface.xml")!;
+        _isMotionDetected = _configuration.GetValue("FaceDetectionSettings:IsMotionDetected", defaultValue: false);
+        _faceFileName = @"Resources\" + _configuration.GetValue("FaceDetectionSettings:DetectionFileName", defaultValue: "lbpcascade_frontalface.xml")!;
         _detectionNeighbors = _configuration.GetValue("FaceDetectionSettings:DetectionNeighbors", defaultValue: 5);
         _detectionSize = _configuration.GetValue("FaceDetectionSettings:DetectionSize", defaultValue: 20);
         _detectionScaleFactor = _configuration.GetValue("FaceDetectionSettings:DetectionScaleFactor", defaultValue: 1.2);
-        _width = _configuration.GetValue("FaceDetectionSettings:Width", defaultValue: 640);
-        _height = _configuration.GetValue("FaceDetectionSettings:Height", defaultValue: 480);
+        _detectionType = _configuration.GetValue("FaceDetectionSettings:DetectionType", defaultValue: 0);
+        _width = _configuration.GetValue("FaceDetectionSettings:DetectionWidth", defaultValue: 640);
+        _height = _configuration.GetValue("FaceDetectionSettings:DetectionHeight", defaultValue: _detectionType == 0 ? 640 : 480);
+        _height = _configuration.GetValue("FaceDetectionSettings:DetectionFrameSkip", defaultValue: 0);
 
         var gate = _dbContext.Gates.SingleOrDefault(g => g.Id == _gateId);
         if (gate == null)
@@ -236,10 +239,17 @@ public partial class FormMain : Form
         TopMost = _alwaysOnTop;
         buttonExit.Visible = _allowExit;
 
-        _cascadeClassifier = new CascadeClassifier(_faceFileName);
-        _faceDetectorYN = new FaceDetectorYN(@"Resources\face_detection_yunet_2023mar.onnx", "", new Size(320, 320));
-        _faceDetectorYN.InputSize = new Size(_width, _height);
-        _backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
+        switch (_detectionType)
+        {
+            case 0:
+            default:
+                _faceDetectorYN = new FaceDetectorYN(@"Resources\face_detection_yunet_2023mar.onnx", "", new Size(_width, _height));
+                break;
+            case 1:
+                _cascadeClassifier = new CascadeClassifier(_faceFileName);
+                _backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
+                break;
+        }
     }
 
     private void ClearForm()
@@ -278,6 +288,10 @@ public partial class FormMain : Form
                     _videoCapture = !string.IsNullOrEmpty(_cameraStreamUrl)
                         ? (isParsed ? new VideoCapture(cameraId) : new VideoCapture(_cameraStreamUrl))
                         : new VideoCapture(1);
+                    
+                    var frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
+                    var frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
+                    _faceDetectorYN.InputSize = new Size(frameWidth, frameHeight);
                     continue;
                 }
 
@@ -286,13 +300,13 @@ public partial class FormMain : Form
                     continue;
                 }
 
-                if (frame.Width > _width)
+                List<Bitmap>? faces;
+                pictureBoxCamera.Image = _detectionType switch
                 {
-                    double scale = (double)_width / frame.Width;
-                    CvInvoke.Resize(frame, frame, new Size((int)(scale * frame.Width), (int)(scale * frame.Height)), 2, 2, Inter.Linear);
-                }
-
-                pictureBoxCamera.Image = DetectFace(frame, out var faces);
+                    0 => DetectFaceYn(frame, out faces),
+                    1 => DetectFaceCascade(frame, out faces),
+                    _ => DetectFaceYn(frame, out faces)
+                };
 
                 if (faces is { Count: > 0 })
                 {
@@ -306,8 +320,14 @@ public partial class FormMain : Form
         }
     }
 
-    private Bitmap DetectFaceOld(Mat inputImage, out List<Bitmap> outputFaces)
+    private Bitmap DetectFaceCascade(Mat inputImage, out List<Bitmap> outputFaces)
     {
+        if (inputImage.Width > _width)
+        {
+            double scale = (double)_width / inputImage.Width;
+            CvInvoke.Resize(inputImage, inputImage, new Size((int)(scale * inputImage.Width), (int)(scale * inputImage.Height)), 2, 2, Inter.Linear);
+        }
+
         outputFaces = new List<Bitmap>();
 
         using var gray = new Mat();
@@ -339,7 +359,28 @@ public partial class FormMain : Form
             _detectionNeighbors,
             new Size(_detectionSize, _detectionSize));
 
-        foreach (var f in facesDetected)
+        return DetectFacePostProcess(inputImage, facesDetected.ToList(), out outputFaces);
+    }
+
+    private Bitmap DetectFaceYn(Mat inputImage, out List<Bitmap> outputFaces)
+    {
+        
+        using var faces = new Mat();
+        _faceDetectorYN.Detect(inputImage, faces);
+        List<Rectangle> facesRectangle = new List<Rectangle>();
+        for (int i = 0; i < faces.Rows; i++)
+        {
+            facesRectangle.Add(new Rectangle((int)GetValue(faces, i, 0), (int)GetValue(faces, i, 1),
+                (int)GetValue(faces, i, 2), (int)GetValue(faces, i, 3)));
+        }
+
+        return DetectFacePostProcess(inputImage, facesRectangle, out outputFaces);
+    }
+
+    private Bitmap DetectFacePostProcess(Mat inputImage, List<Rectangle> faces, out List<Bitmap> outputFaces)
+    {
+        outputFaces = new List<Bitmap>();
+        foreach (var f in faces)
         {
             int x = Math.Min(Math.Min(f.Width / 10, f.X), inputImage.Width - f.Right);
             int y = Math.Min(Math.Min(f.Height / 5, f.Y), inputImage.Height - f.Bottom);
@@ -349,28 +390,7 @@ public partial class FormMain : Form
 
         return inputImage.ToBitmap().Clone(new Rectangle(0, 0, inputImage.Width, inputImage.Height), PixelFormat.DontCare);
     }
-
-    private Bitmap DetectFace(Mat inputImage, out List<Bitmap> outputFaces)
-    {
-
-
-        using var faces = new Mat();
-        outputFaces = new List<Bitmap>();
-        _faceDetectorYN.Detect(inputImage, faces);
-        for (int i = 0; i < faces.Rows; i++)
-        {
-            var faceRect = new Rectangle((int)GetValue(faces, i, 0), (int)GetValue(faces, i, 1),
-                (int)GetValue(faces, i, 2), (int)GetValue(faces, i, 3));
-            int x = Math.Min(Math.Min(faceRect.Width / 10, faceRect.X), inputImage.Width - faceRect.Right);
-            int y = Math.Min(Math.Min(faceRect.Height / 5, faceRect.Y), inputImage.Height - faceRect.Bottom);
-            outputFaces.Add(inputImage.ToBitmap().Clone(Rectangle.Inflate(faceRect, x, y), PixelFormat.DontCare));
-            CvInvoke.Rectangle(inputImage, faceRect, new Bgr(Color.Blue).MCvScalar, 2);
-        }
-
-        return inputImage.ToBitmap().Clone(new Rectangle(0, 0, inputImage.Width, inputImage.Height), PixelFormat.DontCare);
-    }
-
-
+    
     private void Visualize(Mat input, Mat faces, double fps = 30, int thickness = 2)
     {
         for (int i = 0; i < faces.Rows; i++)
@@ -379,11 +399,11 @@ public partial class FormMain : Form
             // Draw bounding box
             CvInvoke.Rectangle(input, new Rectangle((int)GetValue(faces, i, 0), (int)GetValue(faces, i, 1), (int)GetValue(faces, i, 2), (int)GetValue(faces, i, 3)), new Bgr(Color.Blue).MCvScalar, thickness);
             // // Draw landmarks
-            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 4), (int)GetValue(faces, i, 5)), 2, new Bgr(Color.Red).MCvScalar, thickness);
-            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 6), (int)GetValue(faces, i, 7)), 2, new Bgr(Color.Red).MCvScalar, thickness);
-            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 8), (int)GetValue(faces, i, 9)), 2, new Bgr(Color.Red).MCvScalar, thickness);
-            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 10), (int)GetValue(faces, i, 11)), 2, new Bgr(Color.Red).MCvScalar, thickness);
-            // CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 12), (int)GetValue(faces, i, 13)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 4), (int)GetValue(faces, i, 5)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 6), (int)GetValue(faces, i, 7)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 8), (int)GetValue(faces, i, 9)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 10), (int)GetValue(faces, i, 11)), 2, new Bgr(Color.Red).MCvScalar, thickness);
+            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 12), (int)GetValue(faces, i, 13)), 2, new Bgr(Color.Red).MCvScalar, thickness);
         }
     }
 

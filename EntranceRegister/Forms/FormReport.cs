@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Diagnostics;
 using EntranceRegister.Models;
+using Microsoft.Extensions.Configuration;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Color = System.Drawing.Color;
@@ -12,13 +13,15 @@ public partial class FormReport : Form
     private int _maxExportCount;
     private bool _alwaysOnTop;
     private bool _allowExit;
+    private readonly IConfigurationRoot _configuration;
 
     private readonly EntranceContext _dbContext;
 
-    public FormReport(EntranceContext dbContext)
+    public FormReport(EntranceContext dbContext, IConfigurationRoot configuration)
     {
         InitializeComponent();
         _dbContext = dbContext;
+        _configuration = configuration;
         buttonExit.Visible = Globals.GatewayExists;
     }
 
@@ -154,13 +157,9 @@ public partial class FormReport : Form
 
     private void ReadConfiguration()
     {
-        if (!int.TryParse(ConfigurationManager.AppSettings["MaxExportCount"], out _maxExportCount))
-        {
-            _maxExportCount = 1000;
-        }
-
-        bool.TryParse(ConfigurationManager.AppSettings["AlwaysOnTop"], out _alwaysOnTop);
-        bool.TryParse(ConfigurationManager.AppSettings["AllowExit"], out _allowExit);
+        _maxExportCount = _configuration.GetValue("GlobalSettings:MaxExportCount", defaultValue: 1000);
+        _alwaysOnTop = _configuration.GetValue("GlobalSettings:AlwaysOnTop", defaultValue: false);
+        _allowExit = _configuration.GetValue("GlobalSettings:AllowExit", defaultValue: true);
         TopMost = _alwaysOnTop;
         buttonLogOut.Visible = _allowExit;
     }
