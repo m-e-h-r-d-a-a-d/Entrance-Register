@@ -43,7 +43,7 @@ internal static class Program
             }
             else
             {
-                Application.Run(new FormReport(dbContext));
+                Application.Run(new FormReport(dbContext, configuration));
             }
         }
         else

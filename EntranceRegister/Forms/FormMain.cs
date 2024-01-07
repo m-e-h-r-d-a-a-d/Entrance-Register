@@ -35,8 +35,7 @@ public partial class FormMain : Form
     private double _detectionScaleFactor;
     private int _detectionType;
     private int _facesIndex;
-    private int _frameSkip;
-    private int _skipIndex;
+    private int _detectionFrameRate;
     private string _faceFileName;
     private bool _alwaysOnTop;
     private bool _allowExit;
@@ -178,7 +177,7 @@ public partial class FormMain : Form
 
     private void buttonReport_Click(object sender, EventArgs e)
     {
-        new FormReport(_dbContext).ShowDialog();
+        new FormReport(_dbContext, _configuration).ShowDialog();
     }
 
     private void FormMain_KeyDown(object sender, KeyEventArgs e)
@@ -222,7 +221,7 @@ public partial class FormMain : Form
         _detectionType = _configuration.GetValue("FaceDetectionSettings:DetectionType", defaultValue: 0);
         _width = _configuration.GetValue("FaceDetectionSettings:DetectionWidth", defaultValue: 640);
         _height = _configuration.GetValue("FaceDetectionSettings:DetectionHeight", defaultValue: _detectionType == 0 ? 640 : 480);
-        _height = _configuration.GetValue("FaceDetectionSettings:DetectionFrameSkip", defaultValue: 0);
+        _detectionFrameRate = _configuration.GetValue("FaceDetectionSettings:DetectionFrameRate", defaultValue: 20);
 
         var gate = _dbContext.Gates.SingleOrDefault(g => g.Id == _gateId);
         if (gate == null)
@@ -274,6 +273,7 @@ public partial class FormMain : Form
         bool isParsed = int.TryParse(_cameraStreamUrl, out var cameraId);
 
         using var frame = new Mat();
+        var lastTimeDetect = DateTime.Now;
         while (!cancellationToken.IsCancellationRequested)
         {
             try
@@ -288,25 +288,42 @@ public partial class FormMain : Form
                     _videoCapture = !string.IsNullOrEmpty(_cameraStreamUrl)
                         ? (isParsed ? new VideoCapture(cameraId) : new VideoCapture(_cameraStreamUrl))
                         : new VideoCapture(1);
-                    
-                    var frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
-                    var frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
-                    _faceDetectorYN.InputSize = new Size(frameWidth, frameHeight);
-                    continue;
-                }
 
-                if (_frameSkip != 0 && ++_skipIndex % _frameSkip != 0)
-                {
+
+                    switch (_detectionType)
+                    {
+                        case 0:
+                        default:
+                            var frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
+                            var frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
+                            _faceDetectorYN.InputSize = new Size(frameWidth, frameHeight); 
+                            break;
+                        case 1:
+                            break;
+                    }
                     continue;
                 }
 
                 List<Bitmap>? faces;
-                pictureBoxCamera.Image = _detectionType switch
+                var df = (DateTime.Now - lastTimeDetect).TotalMilliseconds;
+                if (_detectionFrameRate != 0 && (1000.0 / _detectionFrameRate) > df)
                 {
-                    0 => DetectFaceYn(frame, out faces),
-                    1 => DetectFaceCascade(frame, out faces),
-                    _ => DetectFaceYn(frame, out faces)
-                };
+                    continue;
+                }
+                
+                lastTimeDetect = DateTime.Now;
+                switch (_detectionType)
+                {
+                    case 0:
+                    default:
+                        DetectFaceYn(frame, out faces);
+                        break;
+                    case 1:
+                        DetectFaceCascade(frame, out faces);
+                        break;
+                }
+
+                pictureBoxCamera.Image = frame.ToBitmap().Clone(new Rectangle(0, 0, frame.Width, frame.Height), PixelFormat.DontCare);
 
                 if (faces is { Count: > 0 })
                 {
@@ -320,7 +337,7 @@ public partial class FormMain : Form
         }
     }
 
-    private Bitmap DetectFaceCascade(Mat inputImage, out List<Bitmap> outputFaces)
+    private void DetectFaceCascade(Mat inputImage, out List<Bitmap> outputFaces)
     {
         if (inputImage.Width > _width)
         {
@@ -359,12 +376,11 @@ public partial class FormMain : Form
             _detectionNeighbors,
             new Size(_detectionSize, _detectionSize));
 
-        return DetectFacePostProcess(inputImage, facesDetected.ToList(), out outputFaces);
+        DetectFacePostProcess(inputImage, facesDetected.ToList(), out outputFaces);
     }
 
-    private Bitmap DetectFaceYn(Mat inputImage, out List<Bitmap> outputFaces)
+    private void DetectFaceYn(Mat inputImage, out List<Bitmap> outputFaces)
     {
-        
         using var faces = new Mat();
         _faceDetectorYN.Detect(inputImage, faces);
         List<Rectangle> facesRectangle = new List<Rectangle>();
@@ -374,10 +390,10 @@ public partial class FormMain : Form
                 (int)GetValue(faces, i, 2), (int)GetValue(faces, i, 3)));
         }
 
-        return DetectFacePostProcess(inputImage, facesRectangle, out outputFaces);
+        DetectFacePostProcess(inputImage, facesRectangle, out outputFaces);
     }
 
-    private Bitmap DetectFacePostProcess(Mat inputImage, List<Rectangle> faces, out List<Bitmap> outputFaces)
+    private void DetectFacePostProcess(Mat inputImage, List<Rectangle> faces, out List<Bitmap> outputFaces)
     {
         outputFaces = new List<Bitmap>();
         foreach (var f in faces)
@@ -387,8 +403,6 @@ public partial class FormMain : Form
             outputFaces.Add(inputImage.ToBitmap().Clone(Rectangle.Inflate(f, x, y), PixelFormat.DontCare));
             CvInvoke.Rectangle(inputImage, f, new Bgr(Color.Blue).MCvScalar, 2);
         }
-
-        return inputImage.ToBitmap().Clone(new Rectangle(0, 0, inputImage.Width, inputImage.Height), PixelFormat.DontCare);
     }
     
     private void Visualize(Mat input, Mat faces, double fps = 30, int thickness = 2)
@@ -562,7 +576,7 @@ public partial class FormMain : Form
 
     private void LoadTodayPresences()
     {
-        _today = DateTime.Now.Date.AddDays(-4);
+        _today = DateTime.Now.Date;
         var list = _dbContext.Presences
             .Where(p => p.StartDate >= _today && p.StartDate < _today.AddDays(1) && p.GateId == Globals.Gate!.Id)
             .OrderByDescending(p => p.StartDate).Include(b => b.Person).ToList();
@@ -573,7 +587,7 @@ public partial class FormMain : Form
 
     private void buttonHelp_Click(object sender, EventArgs e)
     {
-        string yourPath = @"help.chm";
+        string yourPath = @"Resources\help.chm";
         if (File.Exists(yourPath))
         {
             Help.ShowHelp(this, yourPath);

@@ -175,7 +175,7 @@ DocProject/Help/*.hhk
 DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
-*/help.chm
+*/Resources/help.chm
 
 # Click-Once directory
 publish/
