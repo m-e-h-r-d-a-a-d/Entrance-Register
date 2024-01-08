@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
+using System.Runtime.InteropServices;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
@@ -8,9 +9,8 @@ using EntranceRegister.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.WinForms;
-using Stream = System.IO.Stream;
 using Application = System.Windows.Forms.Application;
-using System.Runtime.InteropServices;
+using Stream = System.IO.Stream;
 
 
 namespace EntranceRegister.Forms;
@@ -21,30 +21,30 @@ public partial class FormMain : Form
     private readonly IConfigurationRoot _configuration;
     private DateTime _today;
     private List<Bitmap> _lastDetectedFaces = new List<Bitmap>();
-    private IList<Stream> _streams;
+    private IList<Stream> _streams = null!;
     private int _currentPageIndex;
     private int _detectionSize;
     private int _detectionNeighbors;
-    private string _printerDeviceInfo;
+    private string _printerDeviceInfo = null!;
     private int _width;
     private int _height;
-    private string _cameraStreamUrl;
-    private string _cameraUsername;
-    private string _cameraPassword;
-    private string _cameraDeviceName;
+    private string _cameraStreamUrl = null!;
+    private string _cameraUsername = null!;
+    private string _cameraPassword = null!;
+    private string _cameraDeviceName = null!;
     private double _detectionScaleFactor;
     private int _detectionType;
     private int _facesIndex;
     private int _detectionFrameRate;
-    private string _faceFileName;
+    private string _faceFileName = null!;
     private bool _alwaysOnTop;
     private bool _allowExit;
     private bool _isMotionDetected;
     private Guid _gateId;
     private int _visitorsCount;
-    private CascadeClassifier _cascadeClassifier;
-    private FaceDetectorYN _faceDetectorYN;
-    private BackgroundSubtractorMOG2 _backgroundSubtractor;
+    private CascadeClassifier _cascadeClassifier = null!;
+    private FaceDetectorYN _faceDetectorYN = null!;
+    private BackgroundSubtractorMOG2 _backgroundSubtractor = null!;
     private readonly CancellationTokenSource _cancellationTokenSource;
 
     private VideoCapture? _videoCapture;
@@ -207,7 +207,7 @@ public partial class FormMain : Form
     {
         _printerDeviceInfo = _configuration.GetValue("GlobalSettings:PrinterDeviceInfo", defaultValue: string.Empty)!;
         _gateId = new Guid(_configuration.GetValue("GlobalSettings:GateId", defaultValue: "DF3113F8-09A9-4B0F-9DD7-0843EC4F4A5C")!);
-        _alwaysOnTop = _configuration.GetValue("GlobalSettings:AlwaysOnTop", defaultValue:false);
+        _alwaysOnTop = _configuration.GetValue("GlobalSettings:AlwaysOnTop", defaultValue: false);
         _allowExit = _configuration.GetValue("GlobalSettings:AllowExit", defaultValue: true);
         _cameraStreamUrl = _configuration.GetValue("FaceDetectionSettings:CameraStreamUrl", defaultValue: string.Empty)!;
         _cameraUsername = _configuration.GetValue("FaceDetectionSettings:CameraUsername", defaultValue: string.Empty)!;
@@ -270,7 +270,7 @@ public partial class FormMain : Form
 
     private void ProcessFrame(CancellationToken cancellationToken)
     {
-        bool isParsed = int.TryParse(_cameraStreamUrl, out var cameraId);
+        bool isParsed = int.TryParse(_cameraStreamUrl, out int cameraId);
 
         using var frame = new Mat();
         var lastTimeDetect = DateTime.Now;
@@ -294,9 +294,9 @@ public partial class FormMain : Form
                     {
                         case 0:
                         default:
-                            var frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
-                            var frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
-                            _faceDetectorYN.InputSize = new Size(frameWidth, frameHeight); 
+                            int frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
+                            int frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
+                            _faceDetectorYN.InputSize = new Size(frameWidth, frameHeight);
                             break;
                         case 1:
                             break;
@@ -305,12 +305,12 @@ public partial class FormMain : Form
                 }
 
                 List<Bitmap>? faces;
-                var df = (DateTime.Now - lastTimeDetect).TotalMilliseconds;
+                double df = (DateTime.Now - lastTimeDetect).TotalMilliseconds;
                 if (_detectionFrameRate != 0 && (1000.0 / _detectionFrameRate) > df)
                 {
                     continue;
                 }
-                
+
                 lastTimeDetect = DateTime.Now;
                 switch (_detectionType)
                 {
@@ -404,7 +404,7 @@ public partial class FormMain : Form
             CvInvoke.Rectangle(inputImage, f, new Bgr(Color.Blue).MCvScalar, 2);
         }
     }
-    
+
     private void Visualize(Mat input, Mat faces, double fps = 30, int thickness = 2)
     {
         for (int i = 0; i < faces.Rows; i++)
@@ -423,7 +423,7 @@ public partial class FormMain : Form
 
     public dynamic GetValue(Mat mat, int row, int col)
     {
-        var value = CreateElement(mat.Depth);
+        dynamic value = CreateElement(mat.Depth);
         Marshal.Copy(mat.DataPointer + (row * mat.Cols + col) * mat.ElementSize, value, 0, 1);
         return value[0];
     }
@@ -537,7 +537,7 @@ public partial class FormMain : Form
             Person = person,
             Host = (Host)comboBoxHosts.SelectedValue!,
             StartDate = DateTime.Now,
-            RegistrarUsername = Globals.User.Username,
+            RegistrarUsername = Globals.User!.Username,
             Gate = Globals.Gate!
         };
 
