@@ -884,9 +884,6 @@ partial class FormMain
     private System.Windows.Forms.Timer timerDateTime;
     private System.Windows.Forms.DataGridView dataGridViewPresence;
     private System.Windows.Forms.BindingSource bindingSourceTodayPresences;
-    private System.Windows.Forms.DataGridViewTextBoxColumn registrarIdDataGridViewTextBoxColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn userDataGridViewTextBoxColumn;
-    private System.Windows.Forms.DataGridViewImageColumn photoDataGridViewImageColumn;
     private System.Windows.Forms.Button buttonShutdown;
     private System.Windows.Forms.Button buttonExit;
     private System.Windows.Forms.Button buttonSettings;

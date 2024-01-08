@@ -582,9 +582,6 @@ partial class FormReport
     private System.Windows.Forms.SplitContainer splitContainer;
     private System.Windows.Forms.DataGridView dataGridViewPresence;
     private System.Windows.Forms.BindingSource bindingSourcePresences;
-    private System.Windows.Forms.DataGridViewTextBoxColumn registrarIdDataGridViewTextBoxColumn;
-    private System.Windows.Forms.DataGridViewTextBoxColumn userDataGridViewTextBoxColumn;
-    private System.Windows.Forms.DataGridViewImageColumn photoDataGridViewImageColumn;
     private System.Windows.Forms.ComboBox comboBoxHosts;
     private System.Windows.Forms.Label labelDate;
     private System.Windows.Forms.MaskedTextBox textBoxDateFrom;
