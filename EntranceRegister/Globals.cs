@@ -1,6 +1,5 @@
 ﻿using EntranceRegister.Models;
 using Microsoft.Extensions.Configuration;
-using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 namespace EntranceRegister;
 

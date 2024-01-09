@@ -455,7 +455,7 @@ partial class FormReport
         this.buttonLogOut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonLogOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
         this.buttonLogOut.ForeColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonLogOut.Image = ((System.Drawing.Image)(resources.GetObject("buttonLogOut.Image")));
+        this.buttonLogOut.Image = Properties.Resources.Login_Door_1281;
         this.buttonLogOut.Location = new System.Drawing.Point(252, 0);
         this.buttonLogOut.Margin = new System.Windows.Forms.Padding(0);
         this.buttonLogOut.Name = "buttonLogOut";

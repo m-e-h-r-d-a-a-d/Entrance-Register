@@ -715,7 +715,7 @@ partial class FormMain
         this.buttonExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
         this.buttonExit.ForeColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonExit.Image = ((System.Drawing.Image)(resources.GetObject("buttonExit.Image")));
+        this.buttonExit.Image = Properties.Resources.Login_Door_1281;
         this.buttonExit.Location = new System.Drawing.Point(252, 0);
         this.buttonExit.Margin = new System.Windows.Forms.Padding(0);
         this.buttonExit.Name = "buttonExit";
@@ -739,7 +739,7 @@ partial class FormMain
         this.buttonSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
         this.buttonSettings.ForeColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonSettings.Image = ((System.Drawing.Image)(resources.GetObject("buttonSettings.Image")));
+        this.buttonSettings.Image = Properties.Resources.Tools_02_1281;
         this.buttonSettings.Location = new System.Drawing.Point(760, 0);
         this.buttonSettings.Margin = new System.Windows.Forms.Padding(0);
         this.buttonSettings.Name = "buttonSettings";
@@ -762,7 +762,7 @@ partial class FormMain
         this.buttonReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
         this.buttonReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
         this.buttonReport.ForeColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonReport.Image = ((System.Drawing.Image)(resources.GetObject("buttonReport.Image")));
+        this.buttonReport.Image = Properties.Resources.Clipboard_1281;
         this.buttonReport.Location = new System.Drawing.Point(894, 0);
         this.buttonReport.Margin = new System.Windows.Forms.Padding(0);
         this.buttonReport.Name = "buttonReport";

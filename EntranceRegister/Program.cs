@@ -1,9 +1,8 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
+﻿using EntranceRegister.Forms;
 using EntranceRegister.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Configuration;
-using EntranceRegister.Forms;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EntranceRegister;
 
@@ -32,7 +31,7 @@ internal static class Program
             .AddDbContext<EntranceContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")))
             .BuildServiceProvider();
-        
+
         using var dbContext = serviceProvider.GetRequiredService<EntranceContext>();
 
         if (new FormLogin(dbContext).ShowDialog() == DialogResult.OK)

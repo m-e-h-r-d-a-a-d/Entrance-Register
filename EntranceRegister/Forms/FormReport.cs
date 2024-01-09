@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using EntranceRegister.Models;
 using Microsoft.Extensions.Configuration;
 using OfficeOpenXml;
@@ -131,7 +130,7 @@ public partial class FormReport : Form
         ws.Column(picColumn).Width = PixelToColumnWidth(columnWidth + picMargin * 6);
         ws.DefaultRowHeight = rowHeight;
 
-        var index = 0;
+        int index = 0;
         foreach (var presence in list)
         {
             if (presence.Photo != null)
