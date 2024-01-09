@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
-using System.Runtime.InteropServices;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
@@ -42,10 +41,10 @@ public partial class FormMain : Form
     private bool _isMotionDetected;
     private Guid _gateId;
     private int _visitorsCount;
-    private CascadeClassifier _cascadeClassifier = null!;
-    private FaceDetectorYN _faceDetectorYN = null!;
-    private BackgroundSubtractorMOG2 _backgroundSubtractor = null!;
+    private FaceDetectorCascade _faceDetector;
+    private FaceDetectorYunet _faceDetectorYunet = null!;
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private MotionDetector _motionDetector;
 
     private VideoCapture? _videoCapture;
 
@@ -238,15 +237,23 @@ public partial class FormMain : Form
         TopMost = _alwaysOnTop;
         buttonExit.Visible = _allowExit;
 
+        BackgroundSubtractorMOG2 backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
+        MotionDetector mg = new MotionDetector(backgroundSubtractor, 150);
         switch (_detectionType)
         {
             case 0:
             default:
-                _faceDetectorYN = new FaceDetectorYN(@"Resources\face_detection_yunet_2023mar.onnx", "", new Size(_width, _height));
+                FaceDetectorYN faceDetectorYN = new FaceDetectorYN(@"Resources\face_detection_yunet_2023mar.onnx", "", new Size(_width, _height));
+                _faceDetectorYunet = new FaceDetectorYunet(faceDetectorYN, mg, _isMotionDetected);
+
                 break;
             case 1:
-                _cascadeClassifier = new CascadeClassifier(_faceFileName);
-                _backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
+                CascadeClassifier cascadeClassifier = new CascadeClassifier(_faceFileName);
+
+                _faceDetector = new FaceDetectorCascade(cascadeClassifier, mg, _detectionScaleFactor,
+                    _detectionNeighbors, _detectionSize, _isMotionDetected, _width, _height);
+
+
                 break;
         }
     }
@@ -296,7 +303,7 @@ public partial class FormMain : Form
                         default:
                             int frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
                             int frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
-                            _faceDetectorYN.InputSize = new Size(frameWidth, frameHeight);
+                            _faceDetectorYunet.InputSize = new Size(frameWidth, frameHeight);
                             break;
                         case 1:
                             break;
@@ -304,7 +311,6 @@ public partial class FormMain : Form
                     continue;
                 }
 
-                List<Bitmap>? faces;
                 double df = (DateTime.Now - lastTimeDetect).TotalMilliseconds;
                 if (_detectionFrameRate != 0 && (1000.0 / _detectionFrameRate) > df)
                 {
@@ -312,17 +318,14 @@ public partial class FormMain : Form
                 }
 
                 lastTimeDetect = DateTime.Now;
-                switch (_detectionType)
+                List<Rectangle> facesDetected = _detectionType switch
                 {
-                    case 0:
-                    default:
-                        DetectFaceYn(frame, out faces);
-                        break;
-                    case 1:
-                        DetectFaceCascade(frame, out faces);
-                        break;
-                }
+                    0 => _faceDetectorYunet.DetectFace(frame),
+                    1 => _faceDetector.DetectFace(frame),
+                    _ => _faceDetectorYunet.DetectFace(frame)
+                };
 
+                DetectFacePostProcess(frame, facesDetected, out List<Bitmap>? faces);
                 pictureBoxCamera.Image = frame.ToBitmap().Clone(new Rectangle(0, 0, frame.Width, frame.Height), PixelFormat.DontCare);
 
                 if (faces is { Count: > 0 })
@@ -330,68 +333,13 @@ public partial class FormMain : Form
                     _lastDetectedFaces = faces;
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 // ignored
             }
         }
     }
 
-    private void DetectFaceCascade(Mat inputImage, out List<Bitmap> outputFaces)
-    {
-        if (inputImage.Width > _width)
-        {
-            double scale = (double)_width / inputImage.Width;
-            CvInvoke.Resize(inputImage, inputImage, new Size((int)(scale * inputImage.Width), (int)(scale * inputImage.Height)), 2, 2, Inter.Linear);
-        }
-
-        outputFaces = new List<Bitmap>();
-
-        using var gray = new Mat();
-        if (_isMotionDetected)
-        {
-            double scale = 150.0 / inputImage.Width;
-            using var resizedImage = new Mat();
-            CvInvoke.Resize(inputImage, resizedImage, new Size((int)(scale * inputImage.Width), (int)(scale * inputImage.Height)), 2, 2, Inter.Linear);
-            CvInvoke.GaussianBlur(resizedImage, resizedImage, new Size(7, 7), 0, 0);
-
-            _backgroundSubtractor.Apply(resizedImage, gray);
-            CvInvoke.Threshold(gray, gray, 50, 1, ThresholdType.Binary);
-            CvInvoke.Dilate(gray, gray, null,
-                new Point(-1, -1), 7, BorderType.Default, new MCvScalar(1));
-            CvInvoke.Resize(gray, gray, new Size(inputImage.Width, inputImage.Height), 2, 2, Inter.Linear);
-            CvInvoke.CvtColor(inputImage, resizedImage, ColorConversion.Bgr2Gray);
-            CvInvoke.Multiply(resizedImage, gray, gray);
-        }
-        else
-        {
-            CvInvoke.CvtColor(inputImage, gray, ColorConversion.Bgr2Gray);
-        }
-
-        CvInvoke.EqualizeHist(gray, gray);
-
-        var facesDetected = _cascadeClassifier.DetectMultiScale(
-            gray,
-            _detectionScaleFactor,
-            _detectionNeighbors,
-            new Size(_detectionSize, _detectionSize));
-
-        DetectFacePostProcess(inputImage, facesDetected.ToList(), out outputFaces);
-    }
-
-    private void DetectFaceYn(Mat inputImage, out List<Bitmap> outputFaces)
-    {
-        using var faces = new Mat();
-        _faceDetectorYN.Detect(inputImage, faces);
-        List<Rectangle> facesRectangle = new List<Rectangle>();
-        for (int i = 0; i < faces.Rows; i++)
-        {
-            facesRectangle.Add(new Rectangle((int)GetValue(faces, i, 0), (int)GetValue(faces, i, 1),
-                (int)GetValue(faces, i, 2), (int)GetValue(faces, i, 3)));
-        }
-
-        DetectFacePostProcess(inputImage, facesRectangle, out outputFaces);
-    }
 
     private void DetectFacePostProcess(Mat inputImage, List<Rectangle> faces, out List<Bitmap> outputFaces)
     {
@@ -404,63 +352,6 @@ public partial class FormMain : Form
             CvInvoke.Rectangle(inputImage, f, new Bgr(Color.Blue).MCvScalar, 2);
         }
     }
-
-    private void Visualize(Mat input, Mat faces, double fps = 30, int thickness = 2)
-    {
-        for (int i = 0; i < faces.Rows; i++)
-        {
-
-            // Draw bounding box
-            CvInvoke.Rectangle(input, new Rectangle((int)GetValue(faces, i, 0), (int)GetValue(faces, i, 1), (int)GetValue(faces, i, 2), (int)GetValue(faces, i, 3)), new Bgr(Color.Blue).MCvScalar, thickness);
-            // // Draw landmarks
-            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 4), (int)GetValue(faces, i, 5)), 2, new Bgr(Color.Red).MCvScalar, thickness);
-            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 6), (int)GetValue(faces, i, 7)), 2, new Bgr(Color.Red).MCvScalar, thickness);
-            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 8), (int)GetValue(faces, i, 9)), 2, new Bgr(Color.Red).MCvScalar, thickness);
-            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 10), (int)GetValue(faces, i, 11)), 2, new Bgr(Color.Red).MCvScalar, thickness);
-            CvInvoke.Circle(input, new Point((int)GetValue(faces, i, 12), (int)GetValue(faces, i, 13)), 2, new Bgr(Color.Red).MCvScalar, thickness);
-        }
-    }
-
-    public dynamic GetValue(Mat mat, int row, int col)
-    {
-        dynamic value = CreateElement(mat.Depth);
-        Marshal.Copy(mat.DataPointer + (row * mat.Cols + col) * mat.ElementSize, value, 0, 1);
-        return value[0];
-    }
-
-    private dynamic CreateElement(DepthType depthType)
-    {
-        if (depthType == DepthType.Cv8S)
-        {
-            return new sbyte[1];
-        }
-        if (depthType == DepthType.Cv8U)
-        {
-            return new byte[1];
-        }
-        if (depthType == DepthType.Cv16S)
-        {
-            return new short[1];
-        }
-        if (depthType == DepthType.Cv16U)
-        {
-            return new ushort[1];
-        }
-        if (depthType == DepthType.Cv32S)
-        {
-            return new int[1];
-        }
-        if (depthType == DepthType.Cv32F)
-        {
-            return new float[1];
-        }
-        if (depthType == DepthType.Cv64F)
-        {
-            return new double[1];
-        }
-        return new float[1];
-    }
-
 
     private void Export(Report report)
     {
