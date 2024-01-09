@@ -44,7 +44,7 @@ public static class DateUtils
     {
         try
         {
-            var parts = text.Split('/');
+            string[] parts = text.Split('/');
             var calendar = new PersianCalendar();
             return calendar.ToDateTime(Convert.ToInt32(parts[0]), Convert.ToInt32(parts[1]), Convert.ToInt32(parts[2]), 0, 0, 0, 0);
         }

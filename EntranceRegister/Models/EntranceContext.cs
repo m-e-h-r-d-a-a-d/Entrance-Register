@@ -14,17 +14,17 @@ public partial class EntranceContext : DbContext
     {
     }
 
-    public virtual DbSet<Blacklist> Blacklists { get; set; }
+    public virtual DbSet<Blacklist> Blacklists { get; set; } = null!;
 
-    public virtual DbSet<Gate> Gates { get; set; }
+    public virtual DbSet<Gate> Gates { get; set; } = null!;
 
-    public virtual DbSet<Host> Hosts { get; set; }
+    public virtual DbSet<Host> Hosts { get; set; } = null!;
 
-    public virtual DbSet<Person> People { get; set; }
+    public virtual DbSet<Person> People { get; set; } = null!;
 
-    public virtual DbSet<Presence> Presences { get; set; }
+    public virtual DbSet<Presence> Presences { get; set; } = null!;
 
-    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<User> Users { get; set; } = null!;
 
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     // {

@@ -19,12 +19,12 @@ public partial class FormLogin : Form
     {
 
         var md5 = MD5.Create();
-        var inputBytes = System.Text.Encoding.UTF8.GetBytes(textBoxPassword.Text);
-        var hash = md5.ComputeHash(inputBytes);
+        byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(textBoxPassword.Text);
+        byte[] hash = md5.ComputeHash(inputBytes);
 
         // step 2, convert byte array to hex string
         var sb = new StringBuilder();
-        foreach (var b in hash)
+        foreach (byte b in hash)
         {
             sb.Append(b.ToString("X2"));
         }
