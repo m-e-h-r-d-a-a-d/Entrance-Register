@@ -38,7 +38,7 @@ internal class FaceDetectorYunet : IFaceDetectior
         {
             Mat outputImage = new Mat();
             _motionDetector.DetectMotion(inputImage, outputImage);
-            _faceDetector.Detect(inputImage, outputImage);
+            _faceDetector.Detect(outputImage, faces);
         }
         else
         {
