@@ -19,7 +19,8 @@ public partial class FormMain : Form
     private readonly EntranceContext _dbContext;
     private readonly IConfigurationRoot _configuration;
     private DateTime _today;
-    private List<Bitmap> _lastDetectedFaces = new List<Bitmap>();
+    private List<Bitmap> _detectedFaces = new List<Bitmap>();
+    private List<Bitmap> _capturedFaces = new List<Bitmap>();
     private IList<Stream> _streams = null!;
     private int _currentPageIndex;
     private int _detectionSize;
@@ -32,7 +33,7 @@ public partial class FormMain : Form
     private string _cameraPassword = null!;
     private string _cameraDeviceName = null!;
     private double _detectionScaleFactor;
-    private int _detectionType;
+    private FaceDetectionType _detectionType;
     private int _facesIndex;
     private int _detectionFrameRate;
     private string _faceFileName = null!;
@@ -41,12 +42,10 @@ public partial class FormMain : Form
     private bool _isMotionDetected;
     private Guid _gateId;
     private int _visitorsCount;
-    private FaceDetectorCascade _faceDetector;
-    private FaceDetectorYunet _faceDetectorYunet = null!;
     private readonly CancellationTokenSource _cancellationTokenSource;
-    private MotionDetector _motionDetector;
-
     private VideoCapture? _videoCapture;
+    private IFaceDetectior _faceDetector;
+    private readonly object _lockingObject = new object();
 
     public int VisitorsCount
     {
@@ -81,8 +80,8 @@ public partial class FormMain : Form
     private void buttonTakePhoto_Click(object sender, EventArgs e)
     {
         _facesIndex = 0;
+        CaptureFaces();
         ExtractFace();
-        textBoxName.Focus();
     }
 
     private void buttonRegisterAndPrint_Click(object sender, EventArgs e)
@@ -189,17 +188,7 @@ public partial class FormMain : Form
 
     private void pictureBoxFace_Click(object sender, EventArgs e)
     {
-        if (_lastDetectedFaces.Count == 0)
-        {
-            return;
-        }
-
-        if (++_facesIndex >= _lastDetectedFaces.Count)
-        {
-            _facesIndex = 0;
-        }
-
-        pictureBoxFace.Image = _lastDetectedFaces[_facesIndex];
+        ExtractFace();
     }
 
     private void ReadConfiguration()
@@ -217,7 +206,7 @@ public partial class FormMain : Form
         _detectionNeighbors = _configuration.GetValue("FaceDetectionSettings:DetectionNeighbors", defaultValue: 5);
         _detectionSize = _configuration.GetValue("FaceDetectionSettings:DetectionSize", defaultValue: 20);
         _detectionScaleFactor = _configuration.GetValue("FaceDetectionSettings:DetectionScaleFactor", defaultValue: 1.2);
-        _detectionType = _configuration.GetValue("FaceDetectionSettings:DetectionType", defaultValue: 0);
+        _detectionType = _configuration.GetValue("FaceDetectionSettings:DetectionType", defaultValue: FaceDetectionType.Yunet);
         _width = _configuration.GetValue("FaceDetectionSettings:DetectionWidth", defaultValue: 640);
         _height = _configuration.GetValue("FaceDetectionSettings:DetectionHeight", defaultValue: _detectionType == 0 ? 640 : 480);
         _detectionFrameRate = _configuration.GetValue("FaceDetectionSettings:DetectionFrameRate", defaultValue: 20);
@@ -237,30 +226,15 @@ public partial class FormMain : Form
         TopMost = _alwaysOnTop;
         buttonExit.Visible = _allowExit;
 
-        BackgroundSubtractorMOG2 backgroundSubtractor = new BackgroundSubtractorMOG2(50, 30, false);
-        MotionDetector mg = new MotionDetector(backgroundSubtractor, 150);
-        switch (_detectionType)
-        {
-            case 0:
-            default:
-                FaceDetectorYN faceDetectorYN = new FaceDetectorYN(@"Resources\face_detection_yunet_2023mar.onnx", "", new Size(_width, _height));
-                _faceDetectorYunet = new FaceDetectorYunet(faceDetectorYN, mg, _isMotionDetected);
 
-                break;
-            case 1:
-                CascadeClassifier cascadeClassifier = new CascadeClassifier(_faceFileName);
-
-                _faceDetector = new FaceDetectorCascade(cascadeClassifier, mg, _detectionScaleFactor,
-                    _detectionNeighbors, _detectionSize, _isMotionDetected, _width, _height);
-
-
-                break;
-        }
+        FaceDetectorFactory faceDetectorFactory = new FaceDetectorFactory();
+        _faceDetector = faceDetectorFactory.FactoryMethod(_detectionType, _faceFileName, _detectionScaleFactor,
+            _detectionNeighbors, _detectionSize, _isMotionDetected, _width, _height);
     }
 
     private void ClearForm()
     {
-        pictureBoxFace.Image = null;
+        ExtractFace();
         textBoxName.Text = string.Empty;
     }
 
@@ -297,17 +271,11 @@ public partial class FormMain : Form
                         : new VideoCapture(1);
 
 
-                    switch (_detectionType)
-                    {
-                        case 0:
-                        default:
-                            int frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
-                            int frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
-                            _faceDetectorYunet.InputSize = new Size(frameWidth, frameHeight);
-                            break;
-                        case 1:
-                            break;
-                    }
+
+                    int frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
+                    int frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
+                    _faceDetector.InputSize = new Size(frameWidth, frameHeight);
+
                     continue;
                 }
 
@@ -318,19 +286,17 @@ public partial class FormMain : Form
                 }
 
                 lastTimeDetect = DateTime.Now;
-                List<Rectangle> facesDetected = _detectionType switch
-                {
-                    0 => _faceDetectorYunet.DetectFace(frame),
-                    1 => _faceDetector.DetectFace(frame),
-                    _ => _faceDetectorYunet.DetectFace(frame)
-                };
+                List<Rectangle> facesDetected = _faceDetector.DetectFace(frame);
 
                 DetectFacePostProcess(frame, facesDetected, out List<Bitmap>? faces);
                 pictureBoxCamera.Image = frame.ToBitmap().Clone(new Rectangle(0, 0, frame.Width, frame.Height), PixelFormat.DontCare);
 
                 if (faces is { Count: > 0 })
                 {
-                    _lastDetectedFaces = faces;
+                    lock (_lockingObject)
+                    {
+                        _detectedFaces = faces;
+                    }
                 }
             }
             catch (Exception ex)
@@ -446,12 +412,42 @@ public partial class FormMain : Form
         return presence;
     }
 
+    private void CaptureFaces()
+    {
+        lock (_lockingObject)
+        {
+            if (_detectedFaces.Count == 0)
+            {
+                return;
+            }
+
+            _capturedFaces = _detectedFaces;
+        }
+    }
+
     private void ExtractFace()
     {
-        pictureBoxFace.Image = _lastDetectedFaces.Count > 0 ? _lastDetectedFaces[0] : null;
-        var now = DateTime.Now;
-        textBoxDate.Text = DateUtils.ToPersianDateString(now);
-        textBoxStartTime.Text = DateUtils.ToPersianTimeString(now);
+        lock (_lockingObject)
+        {
+            if (_capturedFaces.Count == 0)
+            {
+                return;
+            }
+
+            if (++_facesIndex >= _capturedFaces.Count)
+            {
+                _facesIndex = 0;
+            }
+
+
+            pictureBoxFace.Image = _capturedFaces[_facesIndex].Clone(new Rectangle(0, 0, _capturedFaces[_facesIndex].Width,
+                _capturedFaces[_facesIndex].Height), _capturedFaces[_facesIndex].PixelFormat);
+
+            var now = DateTime.Now;
+            textBoxDate.Text = DateUtils.ToPersianDateString(now);
+            textBoxStartTime.Text = DateUtils.ToPersianTimeString(now);
+            textBoxName.Focus();
+        }
     }
 
     private void RefreshDateTime()
