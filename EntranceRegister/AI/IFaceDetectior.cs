@@ -1,6 +1,6 @@
 ﻿using Emgu.CV;
 
-namespace EntranceRegister;
+namespace EntranceRegister.AI;
 internal interface IFaceDetectior
 {
     Size InputSize { get; set; }

@@ -3,7 +3,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
-namespace EntranceRegister;
+namespace EntranceRegister.AI;
 internal class FaceDetectorYunet : IFaceDetectior
 {
     private FaceDetectorYN _faceDetector;
@@ -36,7 +36,7 @@ internal class FaceDetectorYunet : IFaceDetectior
         using var faces = new Mat();
         if (_isMotionDetected)
         {
-            Mat outputImage = new Mat();
+            var outputImage = new Mat();
             _motionDetector.DetectMotion(inputImage, outputImage);
             _faceDetector.Detect(outputImage, faces);
         }
@@ -45,7 +45,7 @@ internal class FaceDetectorYunet : IFaceDetectior
             _faceDetector.Detect(inputImage, faces);
         }
 
-        List<Rectangle> facesRectangle = new List<Rectangle>();
+        var facesRectangle = new List<Rectangle>();
         for (int i = 0; i < faces.Rows; i++)
         {
             facesRectangle.Add(new Rectangle((int)GetValue(faces, i, 0), (int)GetValue(faces, i, 1),
