@@ -1,7 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 
-namespace EntranceRegister;
+namespace EntranceRegister.AI;
 internal class FaceDetectorCascade : IFaceDetectior
 {
 
@@ -43,7 +43,7 @@ internal class FaceDetectorCascade : IFaceDetectior
         using var gray = new Mat();
         if (_isMotionDetected)
         {
-            Mat outputImage = new Mat();
+            var outputImage = new Mat();
             _motionDetector.DetectMotion(inputImage, outputImage);
             CvInvoke.CvtColor(outputImage, gray, ColorConversion.Bgr2Gray);
         }

@@ -4,6 +4,7 @@ using System.Drawing.Printing;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using EntranceRegister.AI;
 using EntranceRegister.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
