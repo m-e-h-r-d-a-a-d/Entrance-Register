@@ -30,551 +30,569 @@ partial class FormReport
     /// </summary>
     private void InitializeComponent()
     {
-        this.components = new System.ComponentModel.Container();
-        System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-        System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormReport));
-        this.splitContainer = new System.Windows.Forms.SplitContainer();
-        this.panel2 = new System.Windows.Forms.Panel();
-        this.comboBoxGates = new System.Windows.Forms.ComboBox();
-        this.label2 = new System.Windows.Forms.Label();
-        this.buttonSearch = new System.Windows.Forms.Button();
-        this.label1 = new System.Windows.Forms.Label();
-        this.labelHost = new System.Windows.Forms.Label();
-        this.textBoxDateTo = new System.Windows.Forms.MaskedTextBox();
-        this.textBoxName = new System.Windows.Forms.TextBox();
-        this.comboBoxHosts = new System.Windows.Forms.ComboBox();
-        this.labelName = new System.Windows.Forms.Label();
-        this.labelDate = new System.Windows.Forms.Label();
-        this.textBoxDateFrom = new System.Windows.Forms.MaskedTextBox();
-        this.dataGridViewPresence = new System.Windows.Forms.DataGridView();
-        this.idDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        this.personDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        this.hostDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        this.gateDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        this.startDateDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        this.EndTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        this.StartDatePersian = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        this.Photo = new System.Windows.Forms.DataGridViewImageColumn();
-        this.registrarDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        this.ColumnDummy = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        this.bindingSourcePresences = new System.Windows.Forms.BindingSource(this.components);
-        this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-        this.panel1 = new System.Windows.Forms.Panel();
-        this.buttonExport = new System.Windows.Forms.Button();
-        this.buttonLogOut = new System.Windows.Forms.Button();
-        this.buttonShutdown = new System.Windows.Forms.Button();
-        this.buttonHelp = new System.Windows.Forms.Button();
-        this.buttonExit = new System.Windows.Forms.Button();
-        this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-        this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
-        this.splitContainer.Panel1.SuspendLayout();
-        this.splitContainer.Panel2.SuspendLayout();
-        this.splitContainer.SuspendLayout();
-        this.panel2.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPresence)).BeginInit();
-        ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePresences)).BeginInit();
-        this.tableLayoutPanel1.SuspendLayout();
-        this.panel1.SuspendLayout();
-        this.SuspendLayout();
+        components = new System.ComponentModel.Container();
+        var dataGridViewCellStyle1 = new DataGridViewCellStyle();
+        var dataGridViewCellStyle2 = new DataGridViewCellStyle();
+        splitContainer = new SplitContainer();
+        panel2 = new Panel();
+        comboBoxGates = new ComboBox();
+        label2 = new Label();
+        buttonSearch = new Button();
+        label1 = new Label();
+        labelHost = new Label();
+        textBoxDateTo = new MaskedTextBox();
+        textBoxName = new TextBox();
+        comboBoxHosts = new ComboBox();
+        labelName = new Label();
+        labelDate = new Label();
+        textBoxDateFrom = new MaskedTextBox();
+        dataGridViewPresence = new DataGridView();
+        idDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+        personDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+        hostDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+        gateDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+        startDateDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+        EndTime = new DataGridViewTextBoxColumn();
+        StartDatePersian = new DataGridViewTextBoxColumn();
+        Photo = new DataGridViewImageColumn();
+        registrarDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+        ColumnDummy = new DataGridViewTextBoxColumn();
+        bindingSourcePresences = new BindingSource(components);
+        tableLayoutPanel1 = new TableLayoutPanel();
+        panel1 = new Panel();
+        buttonExport = new Button();
+        buttonLogOut = new Button();
+        buttonShutdown = new Button();
+        buttonHelp = new Button();
+        buttonExit = new Button();
+        saveFileDialog = new SaveFileDialog();
+        dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+        ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
+        splitContainer.Panel1.SuspendLayout();
+        splitContainer.Panel2.SuspendLayout();
+        splitContainer.SuspendLayout();
+        panel2.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)dataGridViewPresence).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)bindingSourcePresences).BeginInit();
+        tableLayoutPanel1.SuspendLayout();
+        panel1.SuspendLayout();
+        SuspendLayout();
         // 
         // splitContainer
         // 
-        this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-        this.splitContainer.BackColor = System.Drawing.Color.WhiteSmoke;
-        this.splitContainer.Location = new System.Drawing.Point(3, 75);
-        this.splitContainer.Name = "splitContainer";
+        splitContainer.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        splitContainer.BackColor = Color.WhiteSmoke;
+        splitContainer.Location = new Point(4, 116);
+        splitContainer.Margin = new Padding(4, 5, 4, 5);
+        splitContainer.Name = "splitContainer";
         // 
         // splitContainer.Panel1
         // 
-        this.splitContainer.Panel1.Controls.Add(this.panel2);
-        this.splitContainer.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+        splitContainer.Panel1.Controls.Add(panel2);
+        splitContainer.Panel1.RightToLeft = RightToLeft.Yes;
         // 
         // splitContainer.Panel2
         // 
-        this.splitContainer.Panel2.Controls.Add(this.dataGridViewPresence);
-        this.splitContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-        this.splitContainer.Size = new System.Drawing.Size(794, 522);
-        this.splitContainer.SplitterDistance = 268;
-        this.splitContainer.TabIndex = 0;
+        splitContainer.Panel2.Controls.Add(dataGridViewPresence);
+        splitContainer.Panel2.RightToLeft = RightToLeft.Yes;
+        splitContainer.Size = new Size(1272, 839);
+        splitContainer.SplitterDistance = 429;
+        splitContainer.SplitterWidth = 5;
+        splitContainer.TabIndex = 0;
         // 
         // panel2
         // 
-        this.panel2.Controls.Add(this.comboBoxGates);
-        this.panel2.Controls.Add(this.label2);
-        this.panel2.Controls.Add(this.buttonSearch);
-        this.panel2.Controls.Add(this.label1);
-        this.panel2.Controls.Add(this.labelHost);
-        this.panel2.Controls.Add(this.textBoxDateTo);
-        this.panel2.Controls.Add(this.textBoxName);
-        this.panel2.Controls.Add(this.comboBoxHosts);
-        this.panel2.Controls.Add(this.labelName);
-        this.panel2.Controls.Add(this.labelDate);
-        this.panel2.Controls.Add(this.textBoxDateFrom);
-        this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-        this.panel2.Location = new System.Drawing.Point(0, 0);
-        this.panel2.Name = "panel2";
-        this.panel2.Size = new System.Drawing.Size(268, 201);
-        this.panel2.TabIndex = 15;
+        panel2.Controls.Add(comboBoxGates);
+        panel2.Controls.Add(label2);
+        panel2.Controls.Add(buttonSearch);
+        panel2.Controls.Add(label1);
+        panel2.Controls.Add(labelHost);
+        panel2.Controls.Add(textBoxDateTo);
+        panel2.Controls.Add(textBoxName);
+        panel2.Controls.Add(comboBoxHosts);
+        panel2.Controls.Add(labelName);
+        panel2.Controls.Add(labelDate);
+        panel2.Controls.Add(textBoxDateFrom);
+        panel2.Dock = DockStyle.Top;
+        panel2.Location = new Point(0, 0);
+        panel2.Margin = new Padding(4, 5, 4, 5);
+        panel2.Name = "panel2";
+        panel2.Size = new Size(429, 309);
+        panel2.TabIndex = 15;
         // 
         // comboBoxGates
         // 
-        this.comboBoxGates.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-        this.comboBoxGates.BackColor = System.Drawing.Color.WhiteSmoke;
-        this.comboBoxGates.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.comboBoxGates.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.comboBoxGates.FormattingEnabled = true;
-        this.comboBoxGates.Location = new System.Drawing.Point(14, 38);
-        this.comboBoxGates.Name = "comboBoxGates";
-        this.comboBoxGates.Size = new System.Drawing.Size(183, 24);
-        this.comboBoxGates.TabIndex = 18;
-        this.comboBoxGates.SelectedIndexChanged += new System.EventHandler(this.comboBoxGates_SelectedIndexChanged);
+        comboBoxGates.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        comboBoxGates.BackColor = Color.WhiteSmoke;
+        comboBoxGates.FlatStyle = FlatStyle.Flat;
+        comboBoxGates.Font = new Font("Microsoft Sans Serif", 9.75F);
+        comboBoxGates.FormattingEnabled = true;
+        comboBoxGates.Location = new Point(19, 58);
+        comboBoxGates.Margin = new Padding(4, 5, 4, 5);
+        comboBoxGates.Name = "comboBoxGates";
+        comboBoxGates.Size = new Size(315, 28);
+        comboBoxGates.TabIndex = 18;
+        comboBoxGates.SelectedIndexChanged += comboBoxGates_SelectedIndexChanged;
         // 
         // label2
         // 
-        this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.label2.AutoSize = true;
-        this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.label2.Location = new System.Drawing.Point(219, 43);
-        this.label2.Name = "label2";
-        this.label2.Size = new System.Drawing.Size(38, 16);
-        this.label2.TabIndex = 17;
-        this.label2.Text = "درگاه";
+        label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        label2.AutoSize = true;
+        label2.Font = new Font("Microsoft Sans Serif", 9.75F);
+        label2.Location = new Point(364, 66);
+        label2.Margin = new Padding(4, 0, 4, 0);
+        label2.Name = "label2";
+        label2.Size = new Size(39, 20);
+        label2.TabIndex = 17;
+        label2.Text = "درگاه";
         // 
         // buttonSearch
         // 
-        this.buttonSearch.BackColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonSearch.Cursor = System.Windows.Forms.Cursors.Hand;
-        this.buttonSearch.Dock = System.Windows.Forms.DockStyle.Bottom;
-        this.buttonSearch.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(43)))), ((int)(((byte)(61)))));
-        this.buttonSearch.FlatAppearance.BorderSize = 0;
-        this.buttonSearch.FlatAppearance.MouseOverBackColor = System.Drawing.Color.SteelBlue;
-        this.buttonSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.buttonSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-        this.buttonSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(43)))), ((int)(((byte)(61)))));
-        this.buttonSearch.Image = Properties.Resources.Search_Find_128;
-        this.buttonSearch.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-        this.buttonSearch.Location = new System.Drawing.Point(0, 128);
-        this.buttonSearch.Margin = new System.Windows.Forms.Padding(20, 0, 20, 0);
-        this.buttonSearch.Name = "buttonSearch";
-        this.buttonSearch.Size = new System.Drawing.Size(268, 73);
-        this.buttonSearch.TabIndex = 4;
-        this.buttonSearch.Text = "جستجو";
-        this.buttonSearch.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-        this.buttonSearch.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-        this.buttonSearch.UseVisualStyleBackColor = false;
-        this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
+        buttonSearch.BackColor = Color.WhiteSmoke;
+        buttonSearch.Cursor = Cursors.Hand;
+        buttonSearch.Dock = DockStyle.Bottom;
+        buttonSearch.FlatAppearance.BorderColor = Color.FromArgb(39, 43, 61);
+        buttonSearch.FlatAppearance.BorderSize = 0;
+        buttonSearch.FlatAppearance.MouseOverBackColor = Color.SteelBlue;
+        buttonSearch.FlatStyle = FlatStyle.Flat;
+        buttonSearch.Font = new Font("Microsoft Sans Serif", 12F);
+        buttonSearch.ForeColor = Color.FromArgb(39, 43, 61);
+        buttonSearch.Image = Properties.Resources.Search_Find_128;
+        buttonSearch.ImageAlign = ContentAlignment.MiddleRight;
+        buttonSearch.Location = new Point(0, 197);
+        buttonSearch.Margin = new Padding(27, 0, 27, 0);
+        buttonSearch.Name = "buttonSearch";
+        buttonSearch.Size = new Size(429, 112);
+        buttonSearch.TabIndex = 4;
+        buttonSearch.Text = "جستجو";
+        buttonSearch.TextAlign = ContentAlignment.MiddleLeft;
+        buttonSearch.TextImageRelation = TextImageRelation.ImageBeforeText;
+        buttonSearch.UseVisualStyleBackColor = false;
+        buttonSearch.Click += buttonSearch_Click;
         // 
         // label1
         // 
-        this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.label1.AutoSize = true;
-        this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.label1.Location = new System.Drawing.Point(103, 106);
-        this.label1.Name = "label1";
-        this.label1.Size = new System.Drawing.Size(17, 16);
-        this.label1.TabIndex = 14;
-        this.label1.Text = "تا";
+        label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        label1.AutoSize = true;
+        label1.Font = new Font("Microsoft Sans Serif", 9.75F);
+        label1.Location = new Point(209, 163);
+        label1.Margin = new Padding(4, 0, 4, 0);
+        label1.Name = "label1";
+        label1.Size = new Size(17, 20);
+        label1.TabIndex = 14;
+        label1.Text = "تا";
         // 
         // labelHost
         // 
-        this.labelHost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.labelHost.AutoSize = true;
-        this.labelHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.labelHost.Location = new System.Drawing.Point(217, 74);
-        this.labelHost.Name = "labelHost";
-        this.labelHost.Size = new System.Drawing.Size(40, 16);
-        this.labelHost.TabIndex = 10;
-        this.labelHost.Text = "میزبان";
+        labelHost.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        labelHost.AutoSize = true;
+        labelHost.Font = new Font("Microsoft Sans Serif", 9.75F);
+        labelHost.Location = new Point(361, 114);
+        labelHost.Margin = new Padding(4, 0, 4, 0);
+        labelHost.Name = "labelHost";
+        labelHost.Size = new Size(45, 20);
+        labelHost.TabIndex = 10;
+        labelHost.Text = "میزبان";
         // 
         // textBoxDateTo
         // 
-        this.textBoxDateTo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.textBoxDateTo.BackColor = System.Drawing.Color.WhiteSmoke;
-        this.textBoxDateTo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.textBoxDateTo.Location = new System.Drawing.Point(13, 104);
-        this.textBoxDateTo.Mask = "0000/00/00";
-        this.textBoxDateTo.Name = "textBoxDateTo";
-        this.textBoxDateTo.RightToLeft = System.Windows.Forms.RightToLeft.No;
-        this.textBoxDateTo.Size = new System.Drawing.Size(84, 22);
-        this.textBoxDateTo.TabIndex = 3;
+        textBoxDateTo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        textBoxDateTo.BackColor = Color.WhiteSmoke;
+        textBoxDateTo.Font = new Font("Microsoft Sans Serif", 9.75F);
+        textBoxDateTo.Location = new Point(89, 160);
+        textBoxDateTo.Margin = new Padding(4, 5, 4, 5);
+        textBoxDateTo.Mask = "0000/00/00";
+        textBoxDateTo.Name = "textBoxDateTo";
+        textBoxDateTo.RightToLeft = RightToLeft.No;
+        textBoxDateTo.Size = new Size(111, 26);
+        textBoxDateTo.TabIndex = 3;
         // 
         // textBoxName
         // 
-        this.textBoxName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-        this.textBoxName.BackColor = System.Drawing.Color.WhiteSmoke;
-        this.textBoxName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-        this.textBoxName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.textBoxName.Location = new System.Drawing.Point(14, 9);
-        this.textBoxName.Name = "textBoxName";
-        this.textBoxName.Size = new System.Drawing.Size(183, 22);
-        this.textBoxName.TabIndex = 0;
+        textBoxName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        textBoxName.BackColor = Color.WhiteSmoke;
+        textBoxName.BorderStyle = BorderStyle.FixedSingle;
+        textBoxName.Font = new Font("Microsoft Sans Serif", 9.75F);
+        textBoxName.Location = new Point(19, 14);
+        textBoxName.Margin = new Padding(4, 5, 4, 5);
+        textBoxName.Name = "textBoxName";
+        textBoxName.Size = new Size(315, 26);
+        textBoxName.TabIndex = 0;
         // 
         // comboBoxHosts
         // 
-        this.comboBoxHosts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-        this.comboBoxHosts.BackColor = System.Drawing.Color.WhiteSmoke;
-        this.comboBoxHosts.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.comboBoxHosts.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.comboBoxHosts.FormattingEnabled = true;
-        this.comboBoxHosts.Location = new System.Drawing.Point(14, 69);
-        this.comboBoxHosts.Name = "comboBoxHosts";
-        this.comboBoxHosts.Size = new System.Drawing.Size(183, 24);
-        this.comboBoxHosts.TabIndex = 1;
+        comboBoxHosts.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        comboBoxHosts.BackColor = Color.WhiteSmoke;
+        comboBoxHosts.FlatStyle = FlatStyle.Flat;
+        comboBoxHosts.Font = new Font("Microsoft Sans Serif", 9.75F);
+        comboBoxHosts.FormattingEnabled = true;
+        comboBoxHosts.Location = new Point(19, 106);
+        comboBoxHosts.Margin = new Padding(4, 5, 4, 5);
+        comboBoxHosts.Name = "comboBoxHosts";
+        comboBoxHosts.Size = new Size(315, 28);
+        comboBoxHosts.TabIndex = 1;
         // 
         // labelName
         // 
-        this.labelName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.labelName.AutoSize = true;
-        this.labelName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.labelName.Location = new System.Drawing.Point(235, 12);
-        this.labelName.Name = "labelName";
-        this.labelName.Size = new System.Drawing.Size(22, 16);
-        this.labelName.TabIndex = 11;
-        this.labelName.Text = "نام";
+        labelName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        labelName.AutoSize = true;
+        labelName.Font = new Font("Microsoft Sans Serif", 9.75F);
+        labelName.Location = new Point(385, 18);
+        labelName.Margin = new Padding(4, 0, 4, 0);
+        labelName.Name = "labelName";
+        labelName.Size = new Size(23, 20);
+        labelName.TabIndex = 11;
+        labelName.Text = "نام";
         // 
         // labelDate
         // 
-        this.labelDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.labelDate.AutoSize = true;
-        this.labelDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.labelDate.Location = new System.Drawing.Point(209, 105);
-        this.labelDate.Name = "labelDate";
-        this.labelDate.Size = new System.Drawing.Size(48, 16);
-        this.labelDate.TabIndex = 8;
-        this.labelDate.Text = "تاریخ از";
+        labelDate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        labelDate.AutoSize = true;
+        labelDate.Font = new Font("Microsoft Sans Serif", 9.75F);
+        labelDate.Location = new Point(351, 162);
+        labelDate.Margin = new Padding(4, 0, 4, 0);
+        labelDate.Name = "labelDate";
+        labelDate.Size = new Size(55, 20);
+        labelDate.TabIndex = 8;
+        labelDate.Text = "تاریخ از";
         // 
         // textBoxDateFrom
         // 
-        this.textBoxDateFrom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.textBoxDateFrom.BackColor = System.Drawing.Color.WhiteSmoke;
-        this.textBoxDateFrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        this.textBoxDateFrom.Location = new System.Drawing.Point(125, 104);
-        this.textBoxDateFrom.Mask = "0000/00/00";
-        this.textBoxDateFrom.Name = "textBoxDateFrom";
-        this.textBoxDateFrom.RightToLeft = System.Windows.Forms.RightToLeft.No;
-        this.textBoxDateFrom.Size = new System.Drawing.Size(71, 22);
-        this.textBoxDateFrom.TabIndex = 2;
+        textBoxDateFrom.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        textBoxDateFrom.BackColor = Color.WhiteSmoke;
+        textBoxDateFrom.Font = new Font("Microsoft Sans Serif", 9.75F);
+        textBoxDateFrom.Location = new Point(239, 160);
+        textBoxDateFrom.Margin = new Padding(4, 5, 4, 5);
+        textBoxDateFrom.Mask = "0000/00/00";
+        textBoxDateFrom.Name = "textBoxDateFrom";
+        textBoxDateFrom.RightToLeft = RightToLeft.No;
+        textBoxDateFrom.Size = new Size(93, 26);
+        textBoxDateFrom.TabIndex = 2;
         // 
         // dataGridViewPresence
         // 
-        this.dataGridViewPresence.AllowUserToAddRows = false;
-        this.dataGridViewPresence.AllowUserToDeleteRows = false;
-        this.dataGridViewPresence.AutoGenerateColumns = false;
-        this.dataGridViewPresence.BackgroundColor = System.Drawing.Color.WhiteSmoke;
-        this.dataGridViewPresence.BorderStyle = System.Windows.Forms.BorderStyle.None;
-        this.dataGridViewPresence.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
-        this.dataGridViewPresence.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-        dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-        dataGridViewCellStyle1.BackColor = System.Drawing.Color.Gainsboro;
-        dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-        dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-        dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-        dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-        dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-        this.dataGridViewPresence.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-        this.dataGridViewPresence.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-        this.dataGridViewPresence.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.idDataGridViewTextBoxColumn,
-            this.personDataGridViewTextBoxColumn,
-            this.hostDataGridViewTextBoxColumn,
-            this.gateDataGridViewTextBoxColumn,
-            this.startDateDataGridViewTextBoxColumn,
-            this.EndTime,
-            this.StartDatePersian,
-            this.Photo,
-            this.registrarDataGridViewTextBoxColumn,
-            this.ColumnDummy});
-        this.dataGridViewPresence.DataSource = this.bindingSourcePresences;
-        dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-        dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-        dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-        dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-        dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-        dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-        dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-        this.dataGridViewPresence.DefaultCellStyle = dataGridViewCellStyle2;
-        this.dataGridViewPresence.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.dataGridViewPresence.Location = new System.Drawing.Point(0, 0);
-        this.dataGridViewPresence.Margin = new System.Windows.Forms.Padding(0);
-        this.dataGridViewPresence.Name = "dataGridViewPresence";
-        this.dataGridViewPresence.ReadOnly = true;
-        this.dataGridViewPresence.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-        this.dataGridViewPresence.RowHeadersVisible = false;
-        this.dataGridViewPresence.RowTemplate.Height = 50;
-        this.dataGridViewPresence.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-        this.dataGridViewPresence.Size = new System.Drawing.Size(522, 522);
-        this.dataGridViewPresence.TabIndex = 0;
-        this.dataGridViewPresence.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridViewPresence_CellFormatting);
+        dataGridViewPresence.AllowUserToAddRows = false;
+        dataGridViewPresence.AllowUserToDeleteRows = false;
+        dataGridViewPresence.AutoGenerateColumns = false;
+        dataGridViewPresence.BackgroundColor = Color.WhiteSmoke;
+        dataGridViewPresence.BorderStyle = BorderStyle.None;
+        dataGridViewPresence.CellBorderStyle = DataGridViewCellBorderStyle.None;
+        dataGridViewPresence.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+        dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        dataGridViewCellStyle1.BackColor = Color.Gainsboro;
+        dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F);
+        dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+        dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+        dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+        dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+        dataGridViewPresence.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+        dataGridViewPresence.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+        dataGridViewPresence.Columns.AddRange(new DataGridViewColumn[] { idDataGridViewTextBoxColumn, personDataGridViewTextBoxColumn, hostDataGridViewTextBoxColumn, gateDataGridViewTextBoxColumn, startDateDataGridViewTextBoxColumn, EndTime, StartDatePersian, Photo, registrarDataGridViewTextBoxColumn, ColumnDummy });
+        dataGridViewPresence.DataSource = bindingSourcePresences;
+        dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        dataGridViewCellStyle2.BackColor = SystemColors.Window;
+        dataGridViewCellStyle2.Font = new Font("Microsoft Sans Serif", 9.75F);
+        dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+        dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+        dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+        dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+        dataGridViewPresence.DefaultCellStyle = dataGridViewCellStyle2;
+        dataGridViewPresence.Dock = DockStyle.Fill;
+        dataGridViewPresence.Location = new Point(0, 0);
+        dataGridViewPresence.Margin = new Padding(0);
+        dataGridViewPresence.Name = "dataGridViewPresence";
+        dataGridViewPresence.ReadOnly = true;
+        dataGridViewPresence.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+        dataGridViewPresence.RowHeadersVisible = false;
+        dataGridViewPresence.RowHeadersWidth = 51;
+        dataGridViewPresence.RowTemplate.Height = 50;
+        dataGridViewPresence.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        dataGridViewPresence.Size = new Size(838, 839);
+        dataGridViewPresence.TabIndex = 0;
+        dataGridViewPresence.CellFormatting += dataGridViewPresence_CellFormatting;
         // 
         // idDataGridViewTextBoxColumn
         // 
-        this.idDataGridViewTextBoxColumn.DataPropertyName = "Id";
-        this.idDataGridViewTextBoxColumn.HeaderText = "شناسه";
-        this.idDataGridViewTextBoxColumn.Name = "idDataGridViewTextBoxColumn";
-        this.idDataGridViewTextBoxColumn.ReadOnly = true;
-        this.idDataGridViewTextBoxColumn.Visible = false;
+        idDataGridViewTextBoxColumn.DataPropertyName = "Id";
+        idDataGridViewTextBoxColumn.HeaderText = "شناسه";
+        idDataGridViewTextBoxColumn.MinimumWidth = 6;
+        idDataGridViewTextBoxColumn.Name = "idDataGridViewTextBoxColumn";
+        idDataGridViewTextBoxColumn.ReadOnly = true;
+        idDataGridViewTextBoxColumn.Visible = false;
+        idDataGridViewTextBoxColumn.Width = 125;
         // 
         // personDataGridViewTextBoxColumn
         // 
-        this.personDataGridViewTextBoxColumn.DataPropertyName = "Person";
-        this.personDataGridViewTextBoxColumn.HeaderText = "نام";
-        this.personDataGridViewTextBoxColumn.Name = "personDataGridViewTextBoxColumn";
-        this.personDataGridViewTextBoxColumn.ReadOnly = true;
-        this.personDataGridViewTextBoxColumn.Width = 150;
+        personDataGridViewTextBoxColumn.DataPropertyName = "Person";
+        personDataGridViewTextBoxColumn.HeaderText = "نام";
+        personDataGridViewTextBoxColumn.MinimumWidth = 6;
+        personDataGridViewTextBoxColumn.Name = "personDataGridViewTextBoxColumn";
+        personDataGridViewTextBoxColumn.ReadOnly = true;
+        personDataGridViewTextBoxColumn.Width = 150;
         // 
         // hostDataGridViewTextBoxColumn
         // 
-        this.hostDataGridViewTextBoxColumn.DataPropertyName = "Host";
-        this.hostDataGridViewTextBoxColumn.HeaderText = "میزبان";
-        this.hostDataGridViewTextBoxColumn.Name = "hostDataGridViewTextBoxColumn";
-        this.hostDataGridViewTextBoxColumn.ReadOnly = true;
-        this.hostDataGridViewTextBoxColumn.Width = 150;
+        hostDataGridViewTextBoxColumn.DataPropertyName = "Host";
+        hostDataGridViewTextBoxColumn.HeaderText = "میزبان";
+        hostDataGridViewTextBoxColumn.MinimumWidth = 6;
+        hostDataGridViewTextBoxColumn.Name = "hostDataGridViewTextBoxColumn";
+        hostDataGridViewTextBoxColumn.ReadOnly = true;
+        hostDataGridViewTextBoxColumn.Width = 150;
         // 
         // gateDataGridViewTextBoxColumn
         // 
-        this.gateDataGridViewTextBoxColumn.DataPropertyName = "GateName";
-        this.gateDataGridViewTextBoxColumn.HeaderText = "ورودی";
-        this.gateDataGridViewTextBoxColumn.Name = "gateDataGridViewTextBoxColumn";
-        this.gateDataGridViewTextBoxColumn.ReadOnly = true;
+        gateDataGridViewTextBoxColumn.DataPropertyName = "GateName";
+        gateDataGridViewTextBoxColumn.HeaderText = "ورودی";
+        gateDataGridViewTextBoxColumn.MinimumWidth = 6;
+        gateDataGridViewTextBoxColumn.Name = "gateDataGridViewTextBoxColumn";
+        gateDataGridViewTextBoxColumn.ReadOnly = true;
+        gateDataGridViewTextBoxColumn.Width = 125;
         // 
         // startDateDataGridViewTextBoxColumn
         // 
-        this.startDateDataGridViewTextBoxColumn.DataPropertyName = "StartTime";
-        this.startDateDataGridViewTextBoxColumn.HeaderText = "زمان ورود";
-        this.startDateDataGridViewTextBoxColumn.Name = "startDateDataGridViewTextBoxColumn";
-        this.startDateDataGridViewTextBoxColumn.ReadOnly = true;
+        startDateDataGridViewTextBoxColumn.DataPropertyName = "StartTime";
+        startDateDataGridViewTextBoxColumn.HeaderText = "زمان ورود";
+        startDateDataGridViewTextBoxColumn.MinimumWidth = 6;
+        startDateDataGridViewTextBoxColumn.Name = "startDateDataGridViewTextBoxColumn";
+        startDateDataGridViewTextBoxColumn.ReadOnly = true;
+        startDateDataGridViewTextBoxColumn.Width = 125;
         // 
         // EndTime
         // 
-        this.EndTime.DataPropertyName = "EndTime";
-        this.EndTime.HeaderText = "زمان خروج";
-        this.EndTime.Name = "EndTime";
-        this.EndTime.ReadOnly = true;
+        EndTime.DataPropertyName = "EndTime";
+        EndTime.HeaderText = "زمان خروج";
+        EndTime.MinimumWidth = 6;
+        EndTime.Name = "EndTime";
+        EndTime.ReadOnly = true;
+        EndTime.Width = 125;
         // 
         // StartDatePersian
         // 
-        this.StartDatePersian.DataPropertyName = "StartDatePersian";
-        this.StartDatePersian.HeaderText = "تاریخ";
-        this.StartDatePersian.Name = "StartDatePersian";
-        this.StartDatePersian.ReadOnly = true;
+        StartDatePersian.DataPropertyName = "StartDatePersian";
+        StartDatePersian.HeaderText = "تاریخ";
+        StartDatePersian.MinimumWidth = 6;
+        StartDatePersian.Name = "StartDatePersian";
+        StartDatePersian.ReadOnly = true;
+        StartDatePersian.Width = 125;
         // 
         // Photo
         // 
-        this.Photo.DataPropertyName = "Photo";
-        this.Photo.HeaderText = "عکس";
-        this.Photo.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-        this.Photo.Name = "Photo";
-        this.Photo.ReadOnly = true;
+        Photo.DataPropertyName = "Photo";
+        Photo.HeaderText = "عکس";
+        Photo.ImageLayout = DataGridViewImageCellLayout.Zoom;
+        Photo.MinimumWidth = 6;
+        Photo.Name = "Photo";
+        Photo.ReadOnly = true;
+        Photo.Width = 125;
         // 
         // registrarDataGridViewTextBoxColumn
         // 
-        this.registrarDataGridViewTextBoxColumn.DataPropertyName = "RegistrarUsername";
-        this.registrarDataGridViewTextBoxColumn.HeaderText = "ثبت کننده";
-        this.registrarDataGridViewTextBoxColumn.Name = "registrarDataGridViewTextBoxColumn";
-        this.registrarDataGridViewTextBoxColumn.ReadOnly = true;
+        registrarDataGridViewTextBoxColumn.DataPropertyName = "RegistrarUsername";
+        registrarDataGridViewTextBoxColumn.HeaderText = "ثبت کننده";
+        registrarDataGridViewTextBoxColumn.MinimumWidth = 6;
+        registrarDataGridViewTextBoxColumn.Name = "registrarDataGridViewTextBoxColumn";
+        registrarDataGridViewTextBoxColumn.ReadOnly = true;
+        registrarDataGridViewTextBoxColumn.Width = 125;
         // 
         // ColumnDummy
         // 
-        this.ColumnDummy.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-        this.ColumnDummy.HeaderText = "";
-        this.ColumnDummy.Name = "ColumnDummy";
-        this.ColumnDummy.ReadOnly = true;
+        ColumnDummy.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        ColumnDummy.HeaderText = "";
+        ColumnDummy.MinimumWidth = 6;
+        ColumnDummy.Name = "ColumnDummy";
+        ColumnDummy.ReadOnly = true;
         // 
         // bindingSourcePresences
         // 
-        this.bindingSourcePresences.DataSource = typeof(Presence);
+        bindingSourcePresences.DataSource = typeof(Presence);
         // 
         // tableLayoutPanel1
         // 
-        this.tableLayoutPanel1.ColumnCount = 1;
-        this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
-        this.tableLayoutPanel1.Controls.Add(this.splitContainer, 0, 1);
-        this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-        this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-        this.tableLayoutPanel1.RowCount = 2;
-        this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 72F));
-        this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 600);
-        this.tableLayoutPanel1.TabIndex = 5;
+        tableLayoutPanel1.ColumnCount = 1;
+        tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        tableLayoutPanel1.Controls.Add(panel1, 0, 0);
+        tableLayoutPanel1.Controls.Add(splitContainer, 0, 1);
+        tableLayoutPanel1.Dock = DockStyle.Fill;
+        tableLayoutPanel1.Location = new Point(0, 0);
+        tableLayoutPanel1.Margin = new Padding(4, 5, 4, 5);
+        tableLayoutPanel1.Name = "tableLayoutPanel1";
+        tableLayoutPanel1.RowCount = 2;
+        tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 111F));
+        tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        tableLayoutPanel1.Size = new Size(1280, 960);
+        tableLayoutPanel1.TabIndex = 5;
         // 
         // panel1
         // 
-        this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(43)))), ((int)(((byte)(61)))));
-        this.panel1.Controls.Add(this.buttonExport);
-        this.panel1.Controls.Add(this.buttonLogOut);
-        this.panel1.Controls.Add(this.buttonShutdown);
-        this.panel1.Controls.Add(this.buttonHelp);
-        this.panel1.Controls.Add(this.buttonExit);
-        this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.panel1.Location = new System.Drawing.Point(0, 0);
-        this.panel1.Margin = new System.Windows.Forms.Padding(0);
-        this.panel1.Name = "panel1";
-        this.panel1.Size = new System.Drawing.Size(800, 72);
-        this.panel1.TabIndex = 0;
+        panel1.BackColor = Color.FromArgb(39, 43, 61);
+        panel1.Controls.Add(buttonExport);
+        panel1.Controls.Add(buttonLogOut);
+        panel1.Controls.Add(buttonShutdown);
+        panel1.Controls.Add(buttonHelp);
+        panel1.Controls.Add(buttonExit);
+        panel1.Dock = DockStyle.Fill;
+        panel1.Location = new Point(0, 0);
+        panel1.Margin = new Padding(0);
+        panel1.Name = "panel1";
+        panel1.Size = new Size(1280, 111);
+        panel1.TabIndex = 0;
         // 
         // buttonExport
         // 
-        this.buttonExport.Cursor = System.Windows.Forms.Cursors.Hand;
-        this.buttonExport.Dock = System.Windows.Forms.DockStyle.Left;
-        this.buttonExport.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(43)))), ((int)(((byte)(61)))));
-        this.buttonExport.FlatAppearance.BorderSize = 0;
-        this.buttonExport.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gainsboro;
-        this.buttonExport.FlatAppearance.MouseOverBackColor = System.Drawing.Color.SteelBlue;
-        this.buttonExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.buttonExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-        this.buttonExport.ForeColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonExport.Image = Properties.Resources.Excel_641;
-        this.buttonExport.Location = new System.Drawing.Point(366, 0);
-        this.buttonExport.Margin = new System.Windows.Forms.Padding(0);
-        this.buttonExport.Name = "buttonExport";
-        this.buttonExport.Size = new System.Drawing.Size(146, 72);
-        this.buttonExport.TabIndex = 4;
-        this.buttonExport.TabStop = false;
-        this.buttonExport.Text = "اکسل";
-        this.buttonExport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-        this.buttonExport.UseVisualStyleBackColor = true;
-        this.buttonExport.Click += new System.EventHandler(this.buttonExport_Click);
+        buttonExport.Cursor = Cursors.Hand;
+        buttonExport.Dock = DockStyle.Left;
+        buttonExport.FlatAppearance.BorderColor = Color.FromArgb(39, 43, 61);
+        buttonExport.FlatAppearance.BorderSize = 0;
+        buttonExport.FlatAppearance.CheckedBackColor = Color.Gainsboro;
+        buttonExport.FlatAppearance.MouseOverBackColor = Color.SteelBlue;
+        buttonExport.FlatStyle = FlatStyle.Flat;
+        buttonExport.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 178);
+        buttonExport.ForeColor = Color.WhiteSmoke;
+        buttonExport.Image = Properties.Resources.Excel_641;
+        buttonExport.Location = new Point(488, 0);
+        buttonExport.Margin = new Padding(0);
+        buttonExport.Name = "buttonExport";
+        buttonExport.Size = new Size(195, 111);
+        buttonExport.TabIndex = 4;
+        buttonExport.TabStop = false;
+        buttonExport.Text = "اکسل";
+        buttonExport.TextImageRelation = TextImageRelation.ImageBeforeText;
+        buttonExport.UseVisualStyleBackColor = true;
+        buttonExport.Click += buttonExport_Click;
         // 
         // buttonLogOut
         // 
-        this.buttonLogOut.Cursor = System.Windows.Forms.Cursors.Hand;
-        this.buttonLogOut.Dock = System.Windows.Forms.DockStyle.Left;
-        this.buttonLogOut.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-        this.buttonLogOut.FlatAppearance.BorderSize = 0;
-        this.buttonLogOut.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gainsboro;
-        this.buttonLogOut.FlatAppearance.MouseOverBackColor = System.Drawing.Color.SteelBlue;
-        this.buttonLogOut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.buttonLogOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-        this.buttonLogOut.ForeColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonLogOut.Image = Properties.Resources.Login_Door_1281;
-        this.buttonLogOut.Location = new System.Drawing.Point(252, 0);
-        this.buttonLogOut.Margin = new System.Windows.Forms.Padding(0);
-        this.buttonLogOut.Name = "buttonLogOut";
-        this.buttonLogOut.Size = new System.Drawing.Size(114, 72);
-        this.buttonLogOut.TabIndex = 6;
-        this.buttonLogOut.TabStop = false;
-        this.buttonLogOut.Text = "خروج";
-        this.buttonLogOut.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-        this.buttonLogOut.UseVisualStyleBackColor = true;
-        this.buttonLogOut.Click += new System.EventHandler(this.buttonLogOut_Click_1);
+        buttonLogOut.Cursor = Cursors.Hand;
+        buttonLogOut.Dock = DockStyle.Left;
+        buttonLogOut.FlatAppearance.BorderColor = Color.FromArgb(52, 73, 94);
+        buttonLogOut.FlatAppearance.BorderSize = 0;
+        buttonLogOut.FlatAppearance.CheckedBackColor = Color.Gainsboro;
+        buttonLogOut.FlatAppearance.MouseOverBackColor = Color.SteelBlue;
+        buttonLogOut.FlatStyle = FlatStyle.Flat;
+        buttonLogOut.Font = new Font("Microsoft Sans Serif", 12F);
+        buttonLogOut.ForeColor = Color.WhiteSmoke;
+        buttonLogOut.Image = Properties.Resources.Login_Door_1281;
+        buttonLogOut.Location = new Point(336, 0);
+        buttonLogOut.Margin = new Padding(0);
+        buttonLogOut.Name = "buttonLogOut";
+        buttonLogOut.Size = new Size(152, 111);
+        buttonLogOut.TabIndex = 6;
+        buttonLogOut.TabStop = false;
+        buttonLogOut.Text = "خروج";
+        buttonLogOut.TextImageRelation = TextImageRelation.ImageBeforeText;
+        buttonLogOut.UseVisualStyleBackColor = true;
+        buttonLogOut.Click += buttonLogOut_Click_1;
         // 
         // buttonShutdown
         // 
-        this.buttonShutdown.Cursor = System.Windows.Forms.Cursors.Hand;
-        this.buttonShutdown.Dock = System.Windows.Forms.DockStyle.Left;
-        this.buttonShutdown.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-        this.buttonShutdown.FlatAppearance.BorderSize = 0;
-        this.buttonShutdown.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gainsboro;
-        this.buttonShutdown.FlatAppearance.MouseOverBackColor = System.Drawing.Color.SteelBlue;
-        this.buttonShutdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.buttonShutdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-        this.buttonShutdown.ForeColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonShutdown.Image = Properties.Resources.Media_Start_1281;
-        this.buttonShutdown.Location = new System.Drawing.Point(118, 0);
-        this.buttonShutdown.Margin = new System.Windows.Forms.Padding(0);
-        this.buttonShutdown.Name = "buttonShutdown";
-        this.buttonShutdown.Size = new System.Drawing.Size(134, 72);
-        this.buttonShutdown.TabIndex = 5;
-        this.buttonShutdown.TabStop = false;
-        this.buttonShutdown.Text = "خاموش";
-        this.buttonShutdown.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-        this.buttonShutdown.UseVisualStyleBackColor = true;
-        this.buttonShutdown.Click += new System.EventHandler(this.buttonShutdown_Click);
+        buttonShutdown.Cursor = Cursors.Hand;
+        buttonShutdown.Dock = DockStyle.Left;
+        buttonShutdown.FlatAppearance.BorderColor = Color.FromArgb(52, 73, 94);
+        buttonShutdown.FlatAppearance.BorderSize = 0;
+        buttonShutdown.FlatAppearance.CheckedBackColor = Color.Gainsboro;
+        buttonShutdown.FlatAppearance.MouseOverBackColor = Color.SteelBlue;
+        buttonShutdown.FlatStyle = FlatStyle.Flat;
+        buttonShutdown.Font = new Font("Microsoft Sans Serif", 12F);
+        buttonShutdown.ForeColor = Color.WhiteSmoke;
+        buttonShutdown.Image = Properties.Resources.Media_Start_1281;
+        buttonShutdown.Location = new Point(157, 0);
+        buttonShutdown.Margin = new Padding(0);
+        buttonShutdown.Name = "buttonShutdown";
+        buttonShutdown.Size = new Size(179, 111);
+        buttonShutdown.TabIndex = 5;
+        buttonShutdown.TabStop = false;
+        buttonShutdown.Text = "خاموش";
+        buttonShutdown.TextImageRelation = TextImageRelation.ImageBeforeText;
+        buttonShutdown.UseVisualStyleBackColor = true;
+        buttonShutdown.Click += buttonShutdown_Click;
         // 
         // buttonHelp
         // 
-        this.buttonHelp.Cursor = System.Windows.Forms.Cursors.Hand;
-        this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Left;
-        this.buttonHelp.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-        this.buttonHelp.FlatAppearance.BorderSize = 0;
-        this.buttonHelp.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gainsboro;
-        this.buttonHelp.FlatAppearance.MouseOverBackColor = System.Drawing.Color.SteelBlue;
-        this.buttonHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.buttonHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-        this.buttonHelp.ForeColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonHelp.Image = Properties.Resources.Student_Read_02_128;
-        this.buttonHelp.Location = new System.Drawing.Point(0, 0);
-        this.buttonHelp.Margin = new System.Windows.Forms.Padding(0);
-        this.buttonHelp.Name = "buttonHelp";
-        this.buttonHelp.Size = new System.Drawing.Size(118, 72);
-        this.buttonHelp.TabIndex = 7;
-        this.buttonHelp.TabStop = false;
-        this.buttonHelp.Text = "راهنما";
-        this.buttonHelp.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-        this.buttonHelp.UseVisualStyleBackColor = true;
-        this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+        buttonHelp.Cursor = Cursors.Hand;
+        buttonHelp.Dock = DockStyle.Left;
+        buttonHelp.FlatAppearance.BorderColor = Color.FromArgb(52, 73, 94);
+        buttonHelp.FlatAppearance.BorderSize = 0;
+        buttonHelp.FlatAppearance.CheckedBackColor = Color.Gainsboro;
+        buttonHelp.FlatAppearance.MouseOverBackColor = Color.SteelBlue;
+        buttonHelp.FlatStyle = FlatStyle.Flat;
+        buttonHelp.Font = new Font("Microsoft Sans Serif", 12F);
+        buttonHelp.ForeColor = Color.WhiteSmoke;
+        buttonHelp.Image = Properties.Resources.Student_Read_02_128;
+        buttonHelp.Location = new Point(0, 0);
+        buttonHelp.Margin = new Padding(0);
+        buttonHelp.Name = "buttonHelp";
+        buttonHelp.Size = new Size(157, 111);
+        buttonHelp.TabIndex = 7;
+        buttonHelp.TabStop = false;
+        buttonHelp.Text = "راهنما";
+        buttonHelp.TextImageRelation = TextImageRelation.ImageBeforeText;
+        buttonHelp.UseVisualStyleBackColor = true;
+        buttonHelp.Click += buttonHelp_Click;
         // 
         // buttonExit
         // 
-        this.buttonExit.AllowDrop = true;
-        this.buttonExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.buttonExit.Cursor = System.Windows.Forms.Cursors.Hand;
-        this.buttonExit.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-        this.buttonExit.FlatAppearance.BorderSize = 0;
-        this.buttonExit.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gainsboro;
-        this.buttonExit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.SteelBlue;
-        this.buttonExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-        this.buttonExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-        this.buttonExit.ForeColor = System.Drawing.Color.WhiteSmoke;
-        this.buttonExit.Image = Properties.Resources.Login_Arrow_128;
-        this.buttonExit.Location = new System.Drawing.Point(665, 0);
-        this.buttonExit.Margin = new System.Windows.Forms.Padding(0);
-        this.buttonExit.Name = "buttonExit";
-        this.buttonExit.Size = new System.Drawing.Size(135, 72);
-        this.buttonExit.TabIndex = 3;
-        this.buttonExit.TabStop = false;
-        this.buttonExit.Text = "ثبت تردد";
-        this.buttonExit.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-        this.buttonExit.UseVisualStyleBackColor = true;
-        this.buttonExit.Click += new System.EventHandler(this.buttonLogout_Click);
+        buttonExit.AllowDrop = true;
+        buttonExit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        buttonExit.Cursor = Cursors.Hand;
+        buttonExit.FlatAppearance.BorderColor = Color.FromArgb(52, 73, 94);
+        buttonExit.FlatAppearance.BorderSize = 0;
+        buttonExit.FlatAppearance.CheckedBackColor = Color.Gainsboro;
+        buttonExit.FlatAppearance.MouseOverBackColor = Color.SteelBlue;
+        buttonExit.FlatStyle = FlatStyle.Flat;
+        buttonExit.Font = new Font("Microsoft Sans Serif", 12F);
+        buttonExit.ForeColor = Color.WhiteSmoke;
+        buttonExit.Image = Properties.Resources.Login_Arrow_128;
+        buttonExit.Location = new Point(1100, 0);
+        buttonExit.Margin = new Padding(0);
+        buttonExit.Name = "buttonExit";
+        buttonExit.Size = new Size(180, 111);
+        buttonExit.TabIndex = 3;
+        buttonExit.TabStop = false;
+        buttonExit.Text = "ثبت تردد";
+        buttonExit.TextImageRelation = TextImageRelation.ImageBeforeText;
+        buttonExit.UseVisualStyleBackColor = true;
+        buttonExit.Click += buttonLogout_Click;
         // 
         // saveFileDialog
         // 
-        this.saveFileDialog.DefaultExt = "xml";
-        this.saveFileDialog.Filter = "Excel|*.xlsx|All files|*.*";
+        saveFileDialog.DefaultExt = "xml";
+        saveFileDialog.Filter = "Excel|*.xlsx|All files|*.*";
         // 
         // dataGridViewTextBoxColumn1
         // 
-        this.dataGridViewTextBoxColumn1.DataPropertyName = "Gate";
-        this.dataGridViewTextBoxColumn1.HeaderText = "ورودی";
-        this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+        dataGridViewTextBoxColumn1.DataPropertyName = "Gate";
+        dataGridViewTextBoxColumn1.HeaderText = "ورودی";
+        dataGridViewTextBoxColumn1.MinimumWidth = 6;
+        dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+        dataGridViewTextBoxColumn1.Width = 125;
         // 
         // FormReport
         // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
-        this.ClientSize = new System.Drawing.Size(800, 600);
-        this.ControlBox = false;
-        this.Controls.Add(this.tableLayoutPanel1);
-        this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-        this.Name = "FormReport";
-        this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-        this.Text = "به فرما";
-        this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-        this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
-        this.Load += new System.EventHandler(this.FormMain_Load);
-        this.splitContainer.Panel1.ResumeLayout(false);
-        this.splitContainer.Panel2.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
-        this.splitContainer.ResumeLayout(false);
-        this.panel2.ResumeLayout(false);
-        this.panel2.PerformLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPresence)).EndInit();
-        ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePresences)).EndInit();
-        this.tableLayoutPanel1.ResumeLayout(false);
-        this.panel1.ResumeLayout(false);
-        this.ResumeLayout(false);
-
+        AutoScaleDimensions = new SizeF(8F, 20F);
+        AutoScaleMode = AutoScaleMode.Font;
+        BackColor = Color.FromArgb(255, 224, 192);
+        ClientSize = new Size(1280, 960);
+        ControlBox = false;
+        Controls.Add(tableLayoutPanel1);
+        FormBorderStyle = FormBorderStyle.None;
+        Margin = new Padding(4, 5, 4, 5);
+        Name = "FormReport";
+        RightToLeft = RightToLeft.Yes;
+        Text = "به فرما";
+        WindowState = FormWindowState.Maximized;
+        FormClosing += FormMain_FormClosing;
+        Load += FormMain_Load;
+        splitContainer.Panel1.ResumeLayout(false);
+        splitContainer.Panel2.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)splitContainer).EndInit();
+        splitContainer.ResumeLayout(false);
+        panel2.ResumeLayout(false);
+        panel2.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)dataGridViewPresence).EndInit();
+        ((System.ComponentModel.ISupportInitialize)bindingSourcePresences).EndInit();
+        tableLayoutPanel1.ResumeLayout(false);
+        panel1.ResumeLayout(false);
+        ResumeLayout(false);
     }
 
     #endregion

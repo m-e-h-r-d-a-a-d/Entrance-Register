@@ -18,6 +18,11 @@ internal static class Program
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
 
+        // Process currentProcess = Process.GetCurrentProcess();
+        // // Get the processor count
+        // int processorCount = Environment.ProcessorCount;
+        // currentProcess.ProcessorAffinity = (IntPtr)1; // Set to use the first CPU core
+
 
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
