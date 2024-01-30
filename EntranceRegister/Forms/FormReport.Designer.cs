@@ -278,7 +278,7 @@ partial class FormReport
         dataGridViewPresence.BorderStyle = BorderStyle.None;
         dataGridViewPresence.CellBorderStyle = DataGridViewCellBorderStyle.None;
         dataGridViewPresence.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-        dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
         dataGridViewCellStyle1.BackColor = Color.Gainsboro;
         dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F);
         dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
@@ -289,7 +289,7 @@ partial class FormReport
         dataGridViewPresence.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         dataGridViewPresence.Columns.AddRange(new DataGridViewColumn[] { idDataGridViewTextBoxColumn, personDataGridViewTextBoxColumn, hostDataGridViewTextBoxColumn, gateDataGridViewTextBoxColumn, startDateDataGridViewTextBoxColumn, EndTime, StartDatePersian, Photo, registrarDataGridViewTextBoxColumn, ColumnDummy });
         dataGridViewPresence.DataSource = bindingSourcePresences;
-        dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
         dataGridViewCellStyle2.BackColor = SystemColors.Window;
         dataGridViewCellStyle2.Font = new Font("Microsoft Sans Serif", 9.75F);
         dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;

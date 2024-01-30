@@ -187,7 +187,7 @@ public partial class FormMain : Form
         }
     }
 
-    private void pictureBoxFace_Click(object sender, EventArgs e)
+    private void PictureBoxCapturedFaceClick(object sender, EventArgs e)
     {
         ExtractFace();
     }
@@ -308,13 +308,13 @@ public partial class FormMain : Form
     }
 
 
-    private void DetectFacePostProcess(Mat inputImage, List<Rectangle> faces, out List<Bitmap> outputFaces)
+    private void DetectFacePostProcess(Mat inputImage, List<Rectangle> facesRectangle, out List<Bitmap> outputFaces)
     {
         outputFaces = new List<Bitmap>();
-        foreach (var f in faces)
+        foreach (var f in facesRectangle)
         {
-            int x = Math.Min(Math.Min(f.Width / 10, f.X), inputImage.Width - f.Right);
-            int y = Math.Min(Math.Min(f.Height / 5, f.Y), inputImage.Height - f.Bottom);
+            int x = Math.Min(Math.Min(f.Width / 7, f.X), inputImage.Width - f.Right);
+            int y = Math.Min(Math.Min(f.Height / 7, f.Y), inputImage.Height - f.Bottom);
             outputFaces.Add(inputImage.ToBitmap().Clone(Rectangle.Inflate(f, x, y), PixelFormat.DontCare));
             CvInvoke.Rectangle(inputImage, f, new Bgr(Color.Blue).MCvScalar, 2);
         }
@@ -399,10 +399,10 @@ public partial class FormMain : Form
             Gate = Globals.Gate!
         };
 
-        if (pictureBoxFace.Image != null)
+        if (pictureBoxCapturedFace.Image != null)
         {
             using var imageStream = new MemoryStream();
-            pictureBoxFace.Image.Save(imageStream, ImageFormat.Jpeg);
+            pictureBoxCapturedFace.Image.Save(imageStream, ImageFormat.Jpeg);
             presence.Photo = imageStream.ToArray();
         }
 
@@ -441,7 +441,7 @@ public partial class FormMain : Form
             }
 
 
-            pictureBoxFace.Image = _capturedFaces[_facesIndex].Clone(new Rectangle(0, 0, _capturedFaces[_facesIndex].Width,
+            pictureBoxCapturedFace.Image = _capturedFaces[_facesIndex].Clone(new Rectangle(0, 0, _capturedFaces[_facesIndex].Width,
                 _capturedFaces[_facesIndex].Height), _capturedFaces[_facesIndex].PixelFormat);
 
             var now = DateTime.Now;
