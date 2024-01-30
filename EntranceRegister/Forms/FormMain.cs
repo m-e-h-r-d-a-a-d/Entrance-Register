@@ -313,8 +313,8 @@ public partial class FormMain : Form
         outputFaces = new List<Bitmap>();
         foreach (var f in facesRectangle)
         {
-            int x = Math.Min(Math.Min(f.Width / 10, f.X), inputImage.Width - f.Right);
-            int y = Math.Min(Math.Min(f.Height / 10, f.Y), inputImage.Height - f.Bottom);
+            int x = Math.Min(Math.Min(f.Width / 7, f.X), inputImage.Width - f.Right);
+            int y = Math.Min(Math.Min(f.Height / 7, f.Y), inputImage.Height - f.Bottom);
             outputFaces.Add(inputImage.ToBitmap().Clone(Rectangle.Inflate(f, x, y), PixelFormat.DontCare));
             CvInvoke.Rectangle(inputImage, f, new Bgr(Color.Blue).MCvScalar, 2);
         }
