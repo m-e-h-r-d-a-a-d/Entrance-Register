@@ -3,7 +3,6 @@ using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
 using EntranceRegister.AI;
 using EntranceRegister.Models;
 using Microsoft.EntityFrameworkCore;
@@ -20,8 +19,8 @@ public partial class FormMain : Form
     private readonly EntranceContext _dbContext;
     private readonly IConfigurationRoot _configuration;
     private DateTime _today;
-    private List<Bitmap> _detectedFaces = new List<Bitmap>();
-    private List<Bitmap> _capturedFaces = new List<Bitmap>();
+    private List<Mat> _detectedFaces = new List<Mat>();
+    private List<Mat> _capturedFaces = new List<Mat>();
     private IList<Stream> _streams = null!;
     private int _currentPageIndex;
     private int _detectionSize;
@@ -47,6 +46,7 @@ public partial class FormMain : Form
     private VideoCapture? _videoCapture;
     private IFaceDetectior _faceDetector;
     private readonly object _lockingObject = new object();
+    private bool _isDetectFaceProcessing = false;
 
     public int VisitorsCount
     {
@@ -280,25 +280,24 @@ public partial class FormMain : Form
                     continue;
                 }
 
+                pictureBoxCamera.Image = frame.ToBitmap();
                 double df = (DateTime.Now - lastTimeDetect).TotalMilliseconds;
-                if (_detectionFrameRate != 0 && (1000.0 / _detectionFrameRate) > df)
+                if ((_detectionFrameRate != 0 && (1000.0 / _detectionFrameRate) > df) || _isDetectFaceProcessing)
                 {
                     continue;
                 }
 
                 lastTimeDetect = DateTime.Now;
-                List<Rectangle> facesDetected = _faceDetector.DetectFace(frame);
+                _isDetectFaceProcessing = true;
 
-                DetectFacePostProcess(frame, facesDetected, out List<Bitmap>? faces);
-                pictureBoxCamera.Image = frame.ToBitmap().Clone(new Rectangle(0, 0, frame.Width, frame.Height), PixelFormat.DontCare);
-
-                if (faces is { Count: > 0 })
+                var tempFrame = frame.Clone();
+                Task.Run(() =>
                 {
-                    lock (_lockingObject)
-                    {
-                        _detectedFaces = faces;
-                    }
-                }
+                    DetectFace(tempFrame);
+                    tempFrame.Dispose();
+                }, cancellationToken);
+
+
             }
             catch (Exception ex)
             {
@@ -307,16 +306,45 @@ public partial class FormMain : Form
         }
     }
 
-
-    private void DetectFacePostProcess(Mat inputImage, List<Rectangle> facesRectangle, out List<Bitmap> outputFaces)
+    private void DetectFace(Mat inputImage)
     {
-        outputFaces = new List<Bitmap>();
+        try
+        {
+            List<Rectangle> facesDetected = _faceDetector.DetectFace(inputImage);
+
+            DetectFacePostProcess(inputImage, facesDetected, out List<Mat>? faces);
+
+
+            if (faces is { Count: > 0 })
+            {
+                lock (_lockingObject)
+                {
+                    _detectedFaces = faces;
+                    pictureBoxDetectedFace.Image = _detectedFaces[0].ToBitmap();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // ignored
+        }
+        finally
+        {
+            _isDetectFaceProcessing = false;
+        }
+
+    }
+
+
+    private void DetectFacePostProcess(Mat inputImage, List<Rectangle> facesRectangle, out List<Mat> outputFaces)
+    {
+        outputFaces = new List<Mat>();
         foreach (var f in facesRectangle)
         {
             int x = Math.Min(Math.Min(f.Width / 7, f.X), inputImage.Width - f.Right);
             int y = Math.Min(Math.Min(f.Height / 7, f.Y), inputImage.Height - f.Bottom);
-            outputFaces.Add(inputImage.ToBitmap().Clone(Rectangle.Inflate(f, x, y), PixelFormat.DontCare));
-            CvInvoke.Rectangle(inputImage, f, new Bgr(Color.Blue).MCvScalar, 2);
+            outputFaces.Add(new Mat(inputImage, Rectangle.Inflate(f, x, y)));
+            // CvInvoke.Rectangle(inputImage, f, new Bgr(Color.Blue).MCvScalar, 2);
         }
     }
 
@@ -441,8 +469,7 @@ public partial class FormMain : Form
             }
 
 
-            pictureBoxCapturedFace.Image = _capturedFaces[_facesIndex].Clone(new Rectangle(0, 0, _capturedFaces[_facesIndex].Width,
-                _capturedFaces[_facesIndex].Height), _capturedFaces[_facesIndex].PixelFormat);
+            pictureBoxCapturedFace.Image = _capturedFaces[_facesIndex].ToBitmap();
 
             var now = DateTime.Now;
             textBoxDate.Text = DateUtils.ToPersianDateString(now);
